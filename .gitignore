@@ -1,0 +1,17 @@
+# Node
+node_modules/
+
+# Environment variables
+.env
+
+# Uploaded videos (local only)
+uploads/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
