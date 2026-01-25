@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Watch YouTube • PopCornTogether</title>
+  <link rel="stylesheet" href="youtube.css" />
+</head>
+<body>
+  <!-- Navbar -->
+  <header>
+    <a class="lg" href="index.html">
+      <span class="pop">PopCorn</span><span class="together">Together</span>
+    </a>
+    <nav>
+      <ul class="nav_links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="movies.html">Movies</a></li>
+        <li><a href="upload.html">Upload and Watch</a></li>
+        <li><a href="youtube.html" class="active">Watch Youtube</a></li>
+        <li><a href="services.html">Services</a></li>
+      </ul>
+    </nav>
+    <a class="cta" href="login.html"><button>Login</button></a>
+  </header>
+
+  <!-- Main Section -->
+  <section class="youtube-section">
+    <div class="container">
+      <!-- Input card -->
+      <div class="input-card">
+        <h1>Watch YouTube</h1>
+        <p>Paste a YouTube link to play the video below</p>
+        <div class="input-group">
+          <input type="text" id="youtubeLink" placeholder="Paste YouTube link here...">
+          <button id="playBtn">▶ Play</button>
+        </div>
+      </div>
+
+      <!-- Player -->
+      <div class="player-card">
+        <iframe id="youtubePlayer" src="" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </div>
+  </section>
+
+</body>
+<script src="youtube.js"></script>
+</html>

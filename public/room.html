@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Together</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #191919;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .welcome-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .welcome-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .welcome-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .welcome-header p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 16px;
+        }
+
+        input[type="text"]::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: #fff;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #48bb78;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Main App */
+        .main-app {
+            display: none;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .room-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .room-id {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .room-id span {
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .users-count {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #48bb78;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+        }
+
+        /* Video Section */
+        .video-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .video-container {
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .video-placeholder {
+            aspect-ratio: 16/9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .video-placeholder svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 15px;
+        }
+
+        .video-controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-upload {
+            flex: 1;
+            background: #667eea;
+        }
+
+        .btn-play {
+            background: #48bb78;
+            padding: 15px 30px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .users-panel, .chat-panel {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .panel-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .user-badge {
+            background: #667eea;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        /* Chat */
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .message.system {
+            background: rgba(255, 255, 255, 0.05);
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .message-user {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 3px;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        .btn-send {
+            background: #48bb78;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .btn-send:hover {
+            background: #38a169;
+        }
+
+        #videoFile {
+            display: none;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-card">
+            <div class="welcome-header">
+                <h1>PopCorn Together</h1>
+                <p>Watch videos with friends in sync</p>
+            </div>
+            
+            <div class="input-group">
+                <input type="text" id="username" placeholder="Enter your name" />
+            </div>
+            
+            <button class="btn btn-primary" onclick="createRoom()">Create New Room</button>
+            
+            <div class="divider">OR</div>
+            
+            <div class="input-group">
+                <input type="text" id="roomIdInput" placeholder="Enter Room ID" />
+            </div>
+            
+            <button class="btn btn-secondary" onclick="joinRoom()">Join Room</button>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="main-app" id="mainApp">
+        <div class="container">
+            <div class="header">
+                <div class="room-info">
+                    <h2>Watch Together</h2>
+                    <div class="room-id">
+                        <span>Room: <span id="displayRoomId"></span></span>
+                        <button class="copy-btn" onclick="copyRoomId()">📋 Copy</button>
+                    </div>
+                </div>
+                <div class="users-count">
+                    <div class="status-dot"></div>
+                    <span id="usersOnline">1 online</span>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <!-- Video Section -->
+                <div class="video-section">
+                    <div class="video-container" id="videoContainer">
+                        <div class="video-placeholder">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p>No video uploaded yet</p>
+                        </div>
+                    </div>
+                    
+                    <div class="video-controls">
+                        <input type="file" id="videoFile" accept="video/*" onchange="handleVideoUpload()" />
+                        <button class="btn btn-upload" onclick="document.getElementById('videoFile').click()">
+                            📤 Upload Video
+                        </button>
+                        <button class="btn btn-play" id="playBtn" onclick="togglePlayPause()" style="display: none;">
+                            ▶️ Play
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="sidebar">
+                    <!-- Users Panel -->
+                    <div class="users-panel">
+                        <div class="panel-header">
+                            👥 Viewers (<span id="userCount">1</span>)
+                        </div>
+                        <div class="user-list" id="userList"></div>
+                    </div>
+
+                    <!-- Chat Panel -->
+                    <div class="chat-panel">
+                        <div class="panel-header">💬 Chat</div>
+                        <div class="chat-messages" id="chatMessages"></div>
+                        <div class="chat-input">
+                            <input type="text" id="messageInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)" />
+                            <button class="btn-send" onclick="sendMessage()">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let socket;
+        let currentRoom = null;
+        let currentUsername = null;
+        let videoElement = null;
+
+        function generateRoomId() {
+            return Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+
+        function createRoom() {
+            const username = document.getElementById('username').value.trim();
+            if (!username) {
+                alert('Please enter your name');
+                return;
+            }
+
+            currentUsername = username;
+            currentRoom = generateRoomId();
+
+            socket = io();
+            
+            socket.emit('create-room', { roomId: currentRoom, username });
+            
+            socket.on('room-created', () => {
+                showMainApp();
+                addSystemMessage(`Room created! Share room ID: ${currentRoom}`);
+            });
+
+            setupSocketListeners();
+        }
+
+        function joinRoom() {
+            const username = document.getElementById('username').value.trim();
+            const roomId = document.getElementById('roomIdInput').value.trim().toUpperCase();
+            
+            if (!username || !roomId) {
+                alert('Please enter your name and room ID');
+                return;
+            }
+
+            currentUsername = username;
+            currentRoom = roomId;
+
+            socket = io();
+            
+            socket.emit('join-room', { roomId: currentRoom, username });
+            
+            socket.on('room-joined', () => {
+                showMainApp();
+            });
+
+            socket.on('room-not-found', () => {
+                alert('Room not found');
+            });
+
+            setupSocketListeners();
+        }
+
+        function setupSocketListeners() {
+            socket.on('user-joined', ({ username, users }) => {
+                updateUserList(users);
+                addSystemMessage(`${username} joined the room`);
+            });
+
+            socket.on('user-left', ({ username, users }) => {
+                updateUserList(users);
+                addSystemMessage(`${username} left the room`);
+            });
+
+            socket.on('sync-video', ({ action, currentTime }) => {
+                if (videoElement) {
+                    isSyncing = true; // Prevent loop
+                    videoElement.currentTime = currentTime;
+                    
+                    if (action === 'play') {
+                        videoElement.play().catch(err => {
+                            console.log('Play prevented:', err);
+                            addSystemMessage('Video play was blocked. Click the video to enable autoplay.');
+                        });
+                        document.getElementById('playBtn').textContent = '⏸️ Pause';
+                    } else {
+                        videoElement.pause();
+                        document.getElementById('playBtn').textContent = '▶️ Play';
+                    }
+                    
+                    setTimeout(() => {
+                        isSyncing = false; // Reset after action completes
+                    }, 100);
+                }
+            });
+
+            socket.on('video-uploaded', ({ username, videoUrl }) => {
+                if (username !== currentUsername) {
+                    loadVideo(videoUrl);
+                    addSystemMessage(`${username} uploaded a video`);
+                }
+            });
+
+            socket.on('new-message', ({ username, message }) => {
+                addChatMessage(username, message);
+            });
+
+            socket.on('load-video', ({ videoUrl }) => {
+                if (videoUrl) {
+                    loadVideo(videoUrl);
+                }
+            });
+        }
+
+        function showMainApp() {
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            document.getElementById('displayRoomId').textContent = currentRoom;
+            
+            const userList = document.getElementById('userList');
+            userList.innerHTML = `
+                <div class="user-item">
+                    <div class="status-dot"></div>
+                    <span>${currentUsername}</span>
+                    <span class="user-badge">You</span>
+                </div>
+            `;
+        }
+
+        function updateUserList(users) {
+            const userList = document.getElementById('userList');
+            const userCount = document.getElementById('userCount');
+            const usersOnline = document.getElementById('usersOnline');
+            
+            userList.innerHTML = users.map(user => `
+                <div class="user-item">
+                    <div class="status-dot"></div>
+                    <span>${user.username}</span>
+                    ${user.username === currentUsername ? '<span class="user-badge">You</span>' : ''}
+                </div>
+            `).join('');
+            
+            userCount.textContent = users.length;
+            usersOnline.textContent = `${users.length} online`;
+        }
+
+        function handleVideoUpload() {
+            const file = document.getElementById('videoFile').files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('video', file);
+            formData.append('roomId', currentRoom);
+            formData.append('username', currentUsername);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                loadVideo(data.videoUrl);
+                socket.emit('video-uploaded', { 
+                    roomId: currentRoom, 
+                    username: currentUsername,
+                    videoUrl: data.videoUrl 
+                });
+                addSystemMessage(`You uploaded a video: ${file.name}`);
+            })
+            .catch(err => {
+                console.error('Upload error:', err);
+                alert('Failed to upload video');
+            });
+        }
+
+        let isSyncing = false; // Prevent sync loops
+
+        function loadVideo(videoUrl) {
+            const container = document.getElementById('videoContainer');
+            container.innerHTML = `<video id="videoPlayer" controls></video>`;
+            
+            videoElement = document.getElementById('videoPlayer');
+            videoElement.src = videoUrl;
+            
+            document.getElementById('playBtn').style.display = 'block';
+
+            // Remove previous event listeners by recreating the element
+            videoElement.addEventListener('play', () => {
+                if (!isSyncing) {
+                    socket.emit('video-control', { 
+                        roomId: currentRoom, 
+                        action: 'play', 
+                        currentTime: videoElement.currentTime 
+                    });
+                }
+                document.getElementById('playBtn').textContent = '⏸️ Pause';
+            });
+
+            videoElement.addEventListener('pause', () => {
+                if (!isSyncing) {
+                    socket.emit('video-control', { 
+                        roomId: currentRoom, 
+                        action: 'pause', 
+                        currentTime: videoElement.currentTime 
+                    });
+                }
+                document.getElementById('playBtn').textContent = '▶️ Play';
+            });
+
+            videoElement.addEventListener('seeked', () => {
+                if (!isSyncing) {
+                    socket.emit('video-control', { 
+                        roomId: currentRoom, 
+                        action: videoElement.paused ? 'pause' : 'play', 
+                        currentTime: videoElement.currentTime 
+                    });
+                }
+            });
+
+            // Load the video
+            videoElement.load();
+        }
+
+        function togglePlayPause() {
+            if (!videoElement) return;
+            
+            if (videoElement.paused) {
+                videoElement.play().catch(err => {
+                    console.error('Play error:', err);
+                    alert('Cannot play video. Please try clicking the video directly.');
+                });
+            } else {
+                videoElement.pause();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            socket.emit('chat-message', { 
+                roomId: currentRoom, 
+                username: currentUsername, 
+                message 
+            });
+            
+            addChatMessage(currentUsername, message);
+            input.value = '';
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function addChatMessage(username, message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            messageDiv.innerHTML = `
+                <div class="message-user">${username}:</div>
+                <div>${message}</div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function addSystemMessage(message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message system';
+            messageDiv.textContent = message;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function copyRoomId() {
+            navigator.clipboard.writeText(currentRoom);
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Copied!';
+            setTimeout(() => {
+                btn.textContent = originalText;
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

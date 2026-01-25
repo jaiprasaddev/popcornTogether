@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap');
+
+:root{
+  --bg: #191919;
+  --panel: #222;
+  --text: #fff;
+  --muted: #aaa;
+  --brand-red: #EF3E3A;
+  --brand-yellow: #f9e368;
+  --brand-grad: linear-gradient(90deg, #EF3E3A, #A65396);
+  --border: rgba(255,255,255,0.12);
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+body{
+  font-family:"Montserrat", sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  padding-top:80px;
+}
+
+/* Navbar (same as your theme) */
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 5%;
+  position:fixed; top:0; left:0;
+  width:100%;
+  background:#191919;
+  border-bottom:1px solid var(--border);
+  z-index:1000;
+}
+.lg{ font-size:24px; font-weight:700; text-decoration: none;}
+.pop{ color:var(--brand-yellow); }
+.together{ color:var(--brand-red); }
+.nav_links{ list-style:none; }
+.nav_links li{ display:inline-block; padding:0 20px; }
+.nav_links li a{ color:#edf0f1; text-decoration:none; position:relative; }
+.nav_links li a:hover{ color:var(--brand-red); }
+.nav_links li a.active::after{
+  content:""; position:absolute; left:0; bottom:-5px;
+  width:100%; height:2px; background:var(--brand-red);
+}
+button{
+  font-size:16px; font-weight:700;
+  color:#fff; padding:9px 25px;
+  background:var(--brand-grad);
+  border:none; border-radius:5px; cursor:pointer;
+}
+button:hover{ transform:scale(1.05); }
+
+/* Section */
+.youtube-section{ padding:40px 5%; }
+.container{
+  display:flex; flex-direction:column;
+  align-items:center; gap:30px;
+}
+
+/* Input card */
+.input-card{
+  background:var(--panel);
+  padding:20px;
+  border-radius:12px;
+  text-align:center;
+  max-width:600px; width:100%;
+}
+.input-card h1{ font-size:26px; margin-bottom:8px; }
+.input-card p{ color:var(--muted); margin-bottom:16px; }
+.input-group{
+  display:flex; gap:10px;
+}
+.input-group input{
+  flex:1;
+  padding:12px;
+  border:none; border-radius:8px;
+  outline:none;
+  font-size:15px;
+}
+.input-group button{
+  background:var(--brand-grad);
+  padding:12px 20px;
+  border-radius:8px;
+}
+
+/* Player */
+.player-card{
+  width:100%;
+  max-width:800px;
+  aspect-ratio:16/9;
+  background:#000;
+  border-radius:12px;
+  overflow:hidden;
+  border:1px solid var(--border);
+}
+.player-card iframe{
+  width:100%; height:100%;
+}

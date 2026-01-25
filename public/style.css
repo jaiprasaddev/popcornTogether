@@ -1,0 +1,480 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap');
+
+*{
+    font-family: "Montserrat", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+}
+
+body {
+    padding-top: 80px;
+    background: #191919;
+    color: white;
+    padding-left: 5%;  
+    padding-right: 5%; 
+}
+.imghero{
+  height: 100%;
+  width: 100%;
+  background-size: cover;
+  position: absolute;
+  opacity: 2%;
+}
+a{
+    font-size: 16px;
+    font-weight: 500;
+    color: #edf0f1;
+    text-decoration: none;
+}
+
+/* Navbar Start */
+header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 5%;
+    position: fixed;     /* navbar ko fix karne ke liye */
+    top: 0;              /* page ke bilkul top pe */
+    left: 0;
+    width: 100%;         /* full width */
+    background: #191919; /* warna transparent ho jayega */
+    z-index: 1000; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.lg{
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: 700;
+}
+.pop {
+    color: #f9e368;   /* PopCorn in yellow */
+}
+.together {
+    color: #EF3E3A;      /* Together in red */
+}
+
+.nav_links{
+    list-style: none;
+}
+
+.nav_links li{
+    display: inline-block;
+    padding: 0px 20px;
+}
+
+.nav_links li a{
+    transition: all 0.3s ease 0s;
+}
+
+.nav_links li a.active {
+  position: relative;
+  color: #fff;   /* normal color, change nahi hoga */
+}
+
+.nav_links li a.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -5px;                /* text ke niche thoda gap */
+  width: 100%;
+  height: 2px;
+  background-color: #EF3E3A;   /* red underline */
+  border-radius: 2px;
+}
+
+
+
+.nav_links li a:hover{
+    color: #EF3E3A;
+    text-shadow: 0 6px 15px rgba(239, 62, 58, 0.6);
+}
+
+button{
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    padding: 9px 25px;
+    background: linear-gradient(90deg, #EF3E3A, #A65396);
+    border-radius: 5px;
+    border: none;
+    transition: all 0.3s ease 0s;
+    cursor: pointer;
+}
+
+button:hover{
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(239, 62, 58, 0.6);
+}
+/* Navbar End*/
+
+
+/* Hero-Section Start*/
+
+.hero {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;  /* ab text + video left se align honge */
+    gap: 40px;
+    min-height: 90vh;
+    color: white;
+}
+
+
+.hero-Video{
+    flex: 1;
+}
+
+.hero-Video video{
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    box-shadow: 0 5px 20px rgba(0,0,0,2);
+}
+
+.hero-Text{
+    flex: 1;
+    text-align: left;
+}
+
+.hero-Text h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+
+.hero-Text h1 span{
+    color: #EF3E3A;
+}
+
+.btn-primary {
+    display: inline-block;
+    padding: 12px 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    background: linear-gradient(90deg, #EF3E3A, #A65396);
+    transition: all 0.3s ease 0s;
+}
+
+.btn-primary:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 15px rgba(239, 62, 58, 0.6);
+}
+
+/* Hero-Section End*/
+
+
+/* FeatureSection Start
+
+.feature {
+  background: linear-gradient(#191919, #1f1f1f);
+  padding: 60px 5%;
+}
+
+.feature h1 {
+  margin-bottom: 50px;
+  font-size: 36px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.feature-container {
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.feature-card {
+  background: transparent;
+  width: 250px;
+  height: 250px;
+  perspective: 1000px; 
+}
+
+.feature-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 1s;
+  transform-style: preserve-3d;
+}
+
+.feature-card:hover .feature-card-inner {
+  transform: rotateY(180deg);
+}
+
+.feature-card-front,
+.feature-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  background: #222;
+  color: white;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.feature-card-front i {
+  font-size: 60px;
+  color: #f9c74f;
+  margin-bottom: 15px;
+}
+
+.feature-card-front h2 {
+  font-size: 22px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.feature-card-back {
+  transform: rotateY(180deg);
+  font-size: 16px;
+  padding: 20px;
+  text-align: center;
+  color: #ccc;
+}
+
+.feature-card-back p {
+  text-align: center;
+  margin: 0;
+  line-height: 1.6;   
+  padding: 10px 20px; 
+}
+
+
+FeatureSection End */
+
+/* Feature Section Container */
+/* Container */
+
+.feature{
+    padding-bottom: 80px;
+    padding-top: 80px;
+}
+
+
+.feature-container {
+  display: flex;
+  justify-content: space-around; /* cards evenly spread honge */
+  gap: 20px;
+  flex-wrap: wrap;               /* responsive ke liye wrap */
+  margin-top: 40px;
+}
+
+/* Card */
+.feature-card {
+  margin-bottom: 50px;  
+  background: #222;
+  flex: 0 0 250px;         /* fix width, row me rakhega */
+  min-height: 250px;
+  height: 320px;            /* content ke hisaab se badhega */
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  text-align: center;
+  transition: all 0.4s ease; /* smooth expand effect */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;   
+  align-items: center;
+  padding: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.feature-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+}
+
+/* Icon */
+.feature-card i {
+  font-size: 60px;
+  color: #f9c74f;
+  margin-bottom: 15px;
+  transition: transform 0.7s ease;
+}
+
+/* Heading */
+.feature-card h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+  color: #fff;
+  transition: transform 0.7s ease;
+}
+
+/* Description hidden initially */
+.feature-card p {
+  font-size: 15px;
+  color: #ccc;
+  line-height: 1.5;
+  opacity: 0;
+  max-height: 0;       
+  overflow: hidden;
+  transition: all 0.7s ease;
+}
+
+/* Hover Effect */
+.feature-card:hover i,
+.feature-card:hover h2 {
+  transform: translateY(-20px);
+}
+
+.feature-card:hover p {
+  opacity: 1;
+  max-height: 200px;   /* enough space for text */
+  margin-top: 10px;    
+}
+/* Feature Section Container end */
+
+/* how its work*/
+
+.how-it-works{
+    padding-bottom: 80px;
+    padding-top: 80px;
+}
+
+.steps-container {
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 40px;
+}
+
+.step-card {
+  background: #222;
+  width: 220px;
+  height: 220px;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.4s ease;
+}
+
+.step-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+}
+
+.step-card i {
+  font-size: 50px;
+  color: #f9c74f;
+  margin-bottom: 15px;
+}
+
+.step-card h2 {
+  font-size: 18px;
+  color: #fff;
+  text-align: center;
+}
+
+
+
+.footer {
+    padding-top: 80px;
+  background: #111;
+  color: #aaa;
+  padding: 60px 0 30px;  /* left/right padding hata diya */
+  margin-left: -5%;      /* body ki padding ko cancel out */
+  margin-right: -5%;     /* dono side full stretch */
+  width: calc(100% + 10%); /* padding ke minus ko cover karne ke liye */
+}
+
+.footer-container {
+    padding-left: 5%;  
+    padding-right: 5%;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.footer-left h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.pop { color: #f9e368; }
+.together { color: #EF3E3A; }
+
+.footer-left p {
+  font-size: 14px;
+  color: #ccc;
+}
+
+.footer-middle h3,
+.footer-right h3 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.footer-middle ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-middle ul li {
+  margin: 8px 0;
+}
+
+.footer-middle ul li a {
+  color: #aaa;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-middle ul li a:hover {
+  color: #EF3E3A;
+}
+
+.footer-right .socials a {
+  margin-right: 15px;
+  color: #aaa;
+  font-size: 20px;
+  transition: color 0.3s;
+}
+
+.footer-right .socials a:hover {
+  color: #f9c74f;
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 14px;
+  color: #666;
+}
+
+.footer-middle,
+.footer-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* horizontally center karega */
+  text-align: center;    /* text bhi center align hoga */
+}
+
+.footer-right .socials {
+  display: flex;
+  justify-content: center;  /* icons ko horizontally center karega */
+  gap: 15px;                /* icons ke beech equal gap */
+  margin-top: 10px;
+}
