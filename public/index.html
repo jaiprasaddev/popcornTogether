@@ -6,8 +6,14 @@
 <title>Watch Together</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+/* ================= RESET ================= */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
+/* ================= BODY ================= */
 body{
     font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
     background:radial-gradient(circle at top,#1f1f1f,#0b0b0b);
@@ -15,6 +21,7 @@ body{
     color:#ffffff;
 }
 
+/* ================= CONTAINER ================= */
 .container{
     max-width:1400px;
     margin:0 auto;
@@ -30,13 +37,14 @@ body{
 }
 
 .welcome-card{
-    background:#1a1a1a;
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(10px);
     border-radius:20px;
     padding:40px;
     max-width:450px;
     width:100%;
     box-shadow:0 25px 60px rgba(0,0,0,.8);
-    border:1px solid #2a2a2a;
+    border:1px solid rgba(255,255,255,.1);
 }
 
 .welcome-header{
@@ -47,34 +55,26 @@ body{
 .logo{
     font-size:2.5em;
     font-weight:700;
-    text-align:center;
 }
 
-.logo .popcorn{
-    color:#f9e368;   /* PopCorn in yellow */
-}
+.logo .popcorn{color:#f9e368;}
+.logo .together{color:#EF3E3A;}
 
-.logo .together{
-    color:#EF3E3A;   /* Together in red */
-}
+.welcome-header p{color:#9ca3af;}
 
-
-.welcome-header p{
-    color:#9ca3af;
-}
-
-.input-group{margin-bottom:20px}
+.input-group{margin-bottom:20px;}
 
 input[type="text"]{
     width:100%;
     padding:15px;
-    border:1px solid #2a2a2a;
     border-radius:10px;
-    background:#111;
+    border:1px solid rgba(255,255,255,.2);
+    background:rgba(255,255,255,.08);
     color:#fff;
 }
 
-input::placeholder{color:#9ca3af}
+input::placeholder{color:#9ca3af;}
+input:focus{outline:none;border-color:#f9e368;}
 
 /* ================= BUTTONS ================= */
 .btn{
@@ -95,17 +95,17 @@ input::placeholder{color:#9ca3af}
 }
 
 .btn-primary:hover{
-    filter:brightness(1.1);
     transform:translateY(-2px);
+    filter:brightness(1.1);
 }
 
 .btn-secondary{
-    background:#222;
-    border:1px solid #333;
+    background:rgba(255,255,255,.1);
     color:#fff;
+    border:1px solid rgba(255,255,255,.2);
 }
 
-.btn-secondary:hover{background:#2c2c2c}
+.btn-secondary:hover{background:rgba(255,255,255,.18);}
 
 .divider{
     text-align:center;
@@ -114,26 +114,44 @@ input::placeholder{color:#9ca3af}
 }
 
 /* ================= MAIN APP ================= */
-.main-app{display:none}
+.main-app{display:none;}
 
 /* ================= HEADER ================= */
 .header{
-    background:#161616;
+    background:rgba(255,255,255,.05);
+    backdrop-filter:blur(10px);
     padding:20px;
     border-radius:15px;
     margin-bottom:20px;
     display:flex;
     justify-content:space-between;
     align-items:center;
+    flex-wrap:wrap;
     gap:15px;
-    border:1px solid #242424;
+    border:1px solid rgba(255,255,255,.1);
+}
+
+.room-info{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
 }
 
 .room-id{
-    background:#0f0f0f;
+    background:rgba(255,255,255,.1);
     padding:10px 20px;
     border-radius:8px;
-    border:1px solid #2a2a2a;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    border:1px solid rgba(255,255,255,.15);
+}
+
+.room-id span{
+    font-family:monospace;
+    font-size:18px;
+    font-weight:bold;
 }
 
 .copy-btn{
@@ -143,6 +161,12 @@ input::placeholder{color:#9ca3af}
     border-radius:6px;
     cursor:pointer;
     font-weight:600;
+}
+
+.users-count{
+    display:flex;
+    align-items:center;
+    gap:8px;
 }
 
 .status-dot{
@@ -167,10 +191,11 @@ input::placeholder{color:#9ca3af}
 
 /* ================= VIDEO ================= */
 .video-section{
-    background:#161616;
+    background:rgba(255,255,255,.05);
+    backdrop-filter:blur(10px);
     border-radius:15px;
     padding:20px;
-    border:1px solid #242424;
+    border:1px solid rgba(255,255,255,.1);
 }
 
 .video-container{
@@ -189,7 +214,11 @@ input::placeholder{color:#9ca3af}
     color:#9ca3af;
 }
 
-.video-controls{display:flex;gap:15px}
+.video-controls{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+}
 
 .btn-upload{
     flex:1;
@@ -198,26 +227,34 @@ input::placeholder{color:#9ca3af}
 }
 
 .btn-play{
-    background:linear-gradient(135deg,#ff4d4d,#ff2d95);
+    background:#22c55e;
     padding:15px 30px;
     color:#fff;
 }
 
 /* ================= SIDEBAR ================= */
-.sidebar{display:flex;flex-direction:column;gap:20px}
+.sidebar{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
 
-.users-panel,.chat-panel{
-    background:#161616;
+.users-panel,
+.chat-panel{
+    background:rgba(255,255,255,.05);
+    backdrop-filter:blur(10px);
     border-radius:15px;
     padding:20px;
-    border:1px solid #242424;
+    border:1px solid rgba(255,255,255,.1);
 }
 
 .user-item{
-    background:#1b1b1b;
+    background:rgba(255,255,255,.08);
     padding:8px;
     border-radius:8px;
-    border:1px solid #2a2a2a;
+    display:flex;
+    align-items:center;
+    gap:10px;
 }
 
 .user-badge{
@@ -233,7 +270,7 @@ input::placeholder{color:#9ca3af}
     overflow-y:auto;
     margin-bottom:15px;
     padding:10px;
-    background:#101010;
+    background:rgba(0,0,0,.3);
     border-radius:8px;
 }
 
@@ -241,7 +278,7 @@ input::placeholder{color:#9ca3af}
     margin-bottom:10px;
     padding:8px;
     border-radius:8px;
-    background:#1a1a1a;
+    background:rgba(255,255,255,.08);
 }
 
 .message.system{
@@ -252,25 +289,48 @@ input::placeholder{color:#9ca3af}
 
 .message-user{
     font-weight:600;
-    color:#ffcc00;
+    color:#f9e368;
+}
+
+.chat-input{
+    display:flex;
+    gap:10px;
 }
 
 .chat-input input{
-    background:#111;
-    border:1px solid #2a2a2a;
+    flex:1;
+    padding:10px;
+    border-radius:8px;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.2);
     color:#fff;
 }
 
 .btn-send{
     background:linear-gradient(135deg,#ff4d4d,#ff2d95);
     color:#fff;
+    border:none;
+    padding:10px 20px;
+    border-radius:8px;
+    cursor:pointer;
 }
 
-#videoFile{display:none}
+/* ================= HIDDEN ================= */
+#videoFile{display:none;}
 
+/* ================= RESPONSIVE ================= */
 @media(max-width:1024px){
-    .main-content{grid-template-columns:1fr}
+    .main-content{
+        grid-template-columns:1fr;
+    }
 }
+
+@media(max-width:600px){
+    .welcome-card{padding:25px;}
+    .logo{font-size:2em;}
+    .chat-messages{height:220px;}
+}
+
 </style>
 </head>
 <body>
