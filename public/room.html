@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #191919;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             color: #fff;
         }
@@ -24,7 +24,6 @@
             padding: 20px;
         }
 
-        /* Welcome Screen */
         .welcome-screen {
             display: flex;
             align-items: center;
@@ -118,7 +117,6 @@
             color: rgba(255, 255, 255, 0.6);
         }
 
-        /* Main App */
         .main-app {
             display: none;
         }
@@ -194,7 +192,6 @@
             gap: 20px;
         }
 
-        /* Video Section */
         .video-section {
             background: rgba(0, 0, 0, 0.3);
             border-radius: 15px;
@@ -244,7 +241,73 @@
             padding: 15px 30px;
         }
 
-        /* Sidebar */
+        .upload-progress {
+            display: none;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .upload-progress.active {
+            display: block;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .progress-filename {
+            font-weight: 600;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 300px;
+        }
+
+        .progress-percentage {
+            font-weight: 700;
+            font-size: 18px;
+            color: #48bb78;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .progress-speed {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .progress-eta {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
         .sidebar {
             display: flex;
             flex-direction: column;
@@ -288,7 +351,6 @@
             font-size: 12px;
         }
 
-        /* Chat */
         .chat-messages {
             height: 300px;
             overflow-y: auto;
@@ -348,6 +410,14 @@
             display: none;
         }
 
+        .chat-panel {
+            height: 80vh;
+        }
+
+        .chat-messages {
+            height: 60vh;
+        }
+
         @media (max-width: 1024px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -356,11 +426,10 @@
     </style>
 </head>
 <body>
-    <!-- Welcome Screen -->
     <div class="welcome-screen" id="welcomeScreen">
         <div class="welcome-card">
             <div class="welcome-header">
-                <h1>PopCorn Together</h1>
+                <h1>🎬 Watch Together</h1>
                 <p>Watch videos with friends in sync</p>
             </div>
             
@@ -380,7 +449,6 @@
         </div>
     </div>
 
-    <!-- Main App -->
     <div class="main-app" id="mainApp">
         <div class="container">
             <div class="header">
@@ -398,7 +466,6 @@
             </div>
 
             <div class="main-content">
-                <!-- Video Section -->
                 <div class="video-section">
                     <div class="video-container" id="videoContainer">
                         <div class="video-placeholder">
@@ -410,19 +477,31 @@
                     </div>
                     
                     <div class="video-controls">
-                        <input type="file" id="videoFile" accept="video/*" onchange="handleVideoUpload()" />
-                        <button class="btn btn-upload" onclick="document.getElementById('videoFile').click()">
-                            📤 Upload Video
+                        <input type="file" id="videoFile" accept="*" onchange="handleVideoUpload()" />
+                        <button class="btn btn-upload" id="uploadBtn" onclick="document.getElementById('videoFile').click()">
+                            📤 Upload File
                         </button>
                         <button class="btn btn-play" id="playBtn" onclick="togglePlayPause()" style="display: none;">
                             ▶️ Play
                         </button>
                     </div>
+
+                    <div class="upload-progress" id="uploadProgress">
+                        <div class="progress-header">
+                            <span class="progress-filename" id="progressFilename">Uploading...</span>
+                            <span class="progress-percentage" id="progressPercentage">0%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="progressBar"></div>
+                        </div>
+                        <div class="progress-stats">
+                            <span class="progress-speed" id="progressSpeed">0 MB/s</span>
+                            <span class="progress-eta" id="progressETA">Calculating...</span>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Sidebar -->
                 <div class="sidebar">
-                    <!-- Users Panel -->
                     <div class="users-panel">
                         <div class="panel-header">
                             👥 Viewers (<span id="userCount">1</span>)
@@ -430,7 +509,6 @@
                         <div class="user-list" id="userList"></div>
                     </div>
 
-                    <!-- Chat Panel -->
                     <div class="chat-panel">
                         <div class="panel-header">💬 Chat</div>
                         <div class="chat-messages" id="chatMessages"></div>
@@ -450,6 +528,7 @@
         let currentRoom = null;
         let currentUsername = null;
         let videoElement = null;
+        let isSyncing = false;
 
         function generateRoomId() {
             return Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -464,7 +543,6 @@
 
             currentUsername = username;
             currentRoom = generateRoomId();
-
             socket = io();
             
             socket.emit('create-room', { roomId: currentRoom, username });
@@ -488,7 +566,6 @@
 
             currentUsername = username;
             currentRoom = roomId;
-
             socket = io();
             
             socket.emit('join-room', { roomId: currentRoom, username });
@@ -517,13 +594,12 @@
 
             socket.on('sync-video', ({ action, currentTime }) => {
                 if (videoElement) {
-                    isSyncing = true; // Prevent loop
+                    isSyncing = true;
                     videoElement.currentTime = currentTime;
                     
                     if (action === 'play') {
                         videoElement.play().catch(err => {
                             console.log('Play prevented:', err);
-                            addSystemMessage('Video play was blocked. Click the video to enable autoplay.');
                         });
                         document.getElementById('playBtn').textContent = '⏸️ Pause';
                     } else {
@@ -531,9 +607,7 @@
                         document.getElementById('playBtn').textContent = '▶️ Play';
                     }
                     
-                    setTimeout(() => {
-                        isSyncing = false; // Reset after action completes
-                    }, 100);
+                    setTimeout(() => { isSyncing = false; }, 100);
                 }
             });
 
@@ -551,6 +625,12 @@
             socket.on('load-video', ({ videoUrl }) => {
                 if (videoUrl) {
                     loadVideo(videoUrl);
+                }
+            });
+
+            socket.on('upload-progress', ({ username, progress, speed, eta, filename }) => {
+                if (username !== currentUsername) {
+                    addSystemMessage(`${username} is uploading: ${filename} - ${progress}% (${speed})`);
                 }
             });
         }
@@ -587,6 +667,22 @@
             usersOnline.textContent = `${users.length} online`;
         }
 
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        function formatTime(seconds) {
+            if (!isFinite(seconds) || seconds < 0) return 'Calculating...';
+            if (seconds < 60) return `${Math.round(seconds)}s`;
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.round(seconds % 60);
+            return `${minutes}m ${secs}s`;
+        }
+
         function handleVideoUpload() {
             const file = document.getElementById('videoFile').files[0];
             if (!file) return;
@@ -596,27 +692,104 @@
             formData.append('roomId', currentRoom);
             formData.append('username', currentUsername);
 
-            fetch('/upload', {
-                method: 'POST',
-                body: formData
-            })
-            .then(res => res.json())
-            .then(data => {
-                loadVideo(data.videoUrl);
-                socket.emit('video-uploaded', { 
-                    roomId: currentRoom, 
-                    username: currentUsername,
-                    videoUrl: data.videoUrl 
-                });
-                addSystemMessage(`You uploaded a video: ${file.name}`);
-            })
-            .catch(err => {
-                console.error('Upload error:', err);
-                alert('Failed to upload video');
-            });
-        }
+            const progressContainer = document.getElementById('uploadProgress');
+            const progressBar = document.getElementById('progressBar');
+            const progressPercentage = document.getElementById('progressPercentage');
+            const progressSpeed = document.getElementById('progressSpeed');
+            const progressETA = document.getElementById('progressETA');
+            const progressFilename = document.getElementById('progressFilename');
+            const uploadBtn = document.getElementById('uploadBtn');
 
-        let isSyncing = false; // Prevent sync loops
+            progressContainer.classList.add('active');
+            progressFilename.textContent = file.name;
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = '⏳ Uploading...';
+
+            let startTime = Date.now();
+            let lastLoaded = 0;
+            let lastTime = startTime;
+
+            const xhr = new XMLHttpRequest();
+
+            xhr.upload.addEventListener('progress', (e) => {
+                if (e.lengthComputable) {
+                    const percentComplete = (e.loaded / e.total) * 100;
+                    const currentTime = Date.now();
+                    const timeDiff = (currentTime - lastTime) / 1000;
+                    const loadedDiff = e.loaded - lastLoaded;
+
+                    const speed = loadedDiff / timeDiff;
+                    const speedText = formatBytes(speed) + '/s';
+
+                    const remainingBytes = e.total - e.loaded;
+                    const eta = remainingBytes / speed;
+
+                    progressBar.style.width = percentComplete + '%';
+                    progressPercentage.textContent = Math.round(percentComplete) + '%';
+                    progressSpeed.textContent = speedText;
+                    progressETA.textContent = 'ETA: ' + formatTime(eta);
+
+                    socket.emit('upload-progress', {
+                        roomId: currentRoom,
+                        username: currentUsername,
+                        progress: Math.round(percentComplete),
+                        speed: speedText,
+                        eta: formatTime(eta),
+                        filename: file.name
+                    });
+
+                    lastLoaded = e.loaded;
+                    lastTime = currentTime;
+                }
+            });
+
+            xhr.addEventListener('load', () => {
+                if (xhr.status === 200) {
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        
+                        if (data.success) {
+                            loadVideo(data.videoUrl);
+                            socket.emit('video-uploaded', { 
+                                roomId: currentRoom, 
+                                username: currentUsername,
+                                videoUrl: data.videoUrl 
+                            });
+                            addSystemMessage(`You uploaded: ${file.name}`);
+                            
+                            setTimeout(() => {
+                                progressContainer.classList.remove('active');
+                                uploadBtn.disabled = false;
+                                uploadBtn.textContent = '📤 Upload File';
+                            }, 2000);
+                        } else {
+                            throw new Error(data.error || 'Upload failed');
+                        }
+                    } catch (e) {
+                        console.error('Error:', e);
+                        alert('Upload failed: ' + e.message);
+                        progressContainer.classList.remove('active');
+                        uploadBtn.disabled = false;
+                        uploadBtn.textContent = '📤 Upload File';
+                    }
+                } else {
+                    alert('Upload failed with status: ' + xhr.status);
+                    progressContainer.classList.remove('active');
+                    uploadBtn.disabled = false;
+                    uploadBtn.textContent = '📤 Upload File';
+                }
+            });
+
+            xhr.addEventListener('error', () => {
+                alert('Network error during upload');
+                progressContainer.classList.remove('active');
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = '📤 Upload File';
+            });
+
+            xhr.open('POST', '/upload');
+            xhr.send(formData);
+        }
 
         function loadVideo(videoUrl) {
             const container = document.getElementById('videoContainer');
@@ -624,10 +797,8 @@
             
             videoElement = document.getElementById('videoPlayer');
             videoElement.src = videoUrl;
-            
             document.getElementById('playBtn').style.display = 'block';
 
-            // Remove previous event listeners by recreating the element
             videoElement.addEventListener('play', () => {
                 if (!isSyncing) {
                     socket.emit('video-control', { 
@@ -660,7 +831,6 @@
                 }
             });
 
-            // Load the video
             videoElement.load();
         }
 
@@ -668,10 +838,7 @@
             if (!videoElement) return;
             
             if (videoElement.paused) {
-                videoElement.play().catch(err => {
-                    console.error('Play error:', err);
-                    alert('Cannot play video. Please try clicking the video directly.');
-                });
+                videoElement.play();
             } else {
                 videoElement.pause();
             }

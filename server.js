@@ -1,212 +1,290 @@
-const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
+const express = require('express');
+const http = require('http');
+const socketIO = require('socket.io');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = socketIO(server);
 
-// ======================
-// UPLOADS DIRECTORY
-// ======================
-const uploadsDir = path.join(__dirname, "uploads");
-
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+// Create uploads directory if it doesn't exist
+if (!fs.existsSync('./uploads')) {
+    fs.mkdirSync('./uploads');
 }
 
-// ======================
-// MULTER CONFIG
-// ======================
+// Configure file upload - Accept ALL file types
 const storage = multer.diskStorage({
-  destination: uploadsDir,
-  filename: (req, file, cb) => {
-    const uniqueName =
-      Date.now() + "-" + Math.round(Math.random() * 1e9) + path.extname(file.originalname);
-    cb(null, uniqueName);
-  },
+    destination: './uploads/',
+    filename: (req, file, cb) => {
+        const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname);
+        cb(null, uniqueName);
+    }
 });
 
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 * 1024 }, // 5GB
-  fileFilter: (req, file, cb) => {
-    const filetypes = /mp4|avi|mkv|mov|wmv|flv|webm/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
-
-    if (extname && mimetype) cb(null, true);
-    else cb(new Error("Only video files are allowed"));
-  },
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 * 1024 } // 5GB limit
+    // No fileFilter - accepts ALL files
 });
 
-// ======================
-// MIDDLEWARES
-// ======================
-app.use(express.json({ limit: "5gb" }));
-app.use(express.urlencoded({ extended: true, limit: "5gb" }));
+// Increase payload limits for large files
+app.use(express.json({ limit: '5gb' }));
+app.use(express.urlencoded({ limit: '5gb', extended: true }));
 
-app.use(express.static(path.join(__dirname, "public")));
-app.use("/uploads", express.static(uploadsDir));
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Root
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+// Explicitly serve index.html for root route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// ======================
-// ROOMS STORAGE
-// ======================
+// Store room data
 const rooms = {};
 
-// ======================
-// SOCKET.IO
-// ======================
-io.on("connection", (socket) => {
-  console.log("✅ User connected:", socket.id);
+// Socket.IO connection handling
+io.on('connection', (socket) => {
+    console.log('✅ User connected:', socket.id);
 
-  // CREATE ROOM
-  socket.on("create-room", ({ roomId, username }) => {
-    rooms[roomId] = {
-      host: socket.id,
-      hostUsername: username,
-      users: [{ id: socket.id, username, isHost: true }],
-      videoUrl: null,
-      videoState: { isPlaying: false, currentTime: 0 },
-    };
-
-    socket.join(roomId);
-    socket.roomId = roomId;
-    socket.username = username;
-    socket.isHost = true;
-
-    socket.emit("room-created", { roomId, isHost: true });
-    console.log(`👑 Room ${roomId} created by ${username}`);
-  });
-
-  // JOIN ROOM
-  socket.on("join-room", ({ roomId, username }) => {
-    if (!rooms[roomId]) {
-      socket.emit("room-not-found");
-      return;
-    }
-
-    rooms[roomId].users.push({ id: socket.id, username, isHost: false });
-    socket.join(roomId);
-
-    socket.roomId = roomId;
-    socket.username = username;
-    socket.isHost = false;
-
-    io.to(roomId).emit("user-joined", {
-      username,
-      users: rooms[roomId].users,
-      hostId: rooms[roomId].host,
+    // Create room
+    socket.on('create-room', ({ roomId, username }) => {
+        rooms[roomId] = {
+            host: socket.id,
+            hostUsername: username,
+            users: [{ id: socket.id, username, isHost: true }],
+            videoUrl: null,
+            videoState: { isPlaying: false, currentTime: 0 }
+        };
+        
+        socket.join(roomId);
+        socket.roomId = roomId;
+        socket.username = username;
+        socket.isHost = true;
+        
+        console.log(`🎬 Room created: ${roomId} by ${username} (HOST)`);
+        socket.emit('room-created', { roomId, isHost: true });
     });
 
-    socket.emit("room-joined", {
-      isHost: false,
-      hostUsername: rooms[roomId].hostUsername,
+    // Join room
+    socket.on('join-room', ({ roomId, username }) => {
+        if (rooms[roomId]) {
+            rooms[roomId].users.push({ id: socket.id, username, isHost: false });
+            socket.join(roomId);
+            socket.roomId = roomId;
+            socket.username = username;
+            socket.isHost = false;
+            
+            console.log(`👤 ${username} joined room: ${roomId}`);
+            
+            // Notify all users in room
+            io.to(roomId).emit('user-joined', { 
+                username, 
+                users: rooms[roomId].users,
+                hostId: rooms[roomId].host
+            });
+            
+            // Send current video state to new user
+            socket.emit('room-joined', { isHost: false, hostUsername: rooms[roomId].hostUsername });
+            if (rooms[roomId].videoUrl) {
+                socket.emit('load-video', { videoUrl: rooms[roomId].videoUrl });
+                socket.emit('sync-video', rooms[roomId].videoState);
+            }
+        } else {
+            socket.emit('room-not-found');
+        }
     });
 
-    if (rooms[roomId].videoUrl) {
-      socket.emit("load-video", { videoUrl: rooms[roomId].videoUrl });
-      socket.emit("sync-video", rooms[roomId].videoState);
-    }
-  });
+    // Video control (play/pause/seek) - ONLY HOST CAN CONTROL
+    socket.on('video-control', ({ roomId, action, currentTime }) => {
+        if (rooms[roomId]) {
+            // Check if user is host
+            if (socket.id === rooms[roomId].host) {
+                rooms[roomId].videoState = { 
+                    isPlaying: action === 'play', 
+                    currentTime 
+                };
+                
+                // Broadcast to all users except sender
+                socket.to(roomId).emit('sync-video', { action, currentTime });
+                console.log(`🎮 ${socket.username} (HOST) ${action}ed video at ${currentTime}s in room ${roomId}`);
+            } else {
+                // Not the host - reject control
+                socket.emit('control-denied', { message: 'Only the host can control the video' });
+                console.log(`⛔ ${socket.username} tried to control video but is not host`);
+            }
+        }
+    });
 
-  // VIDEO CONTROL (HOST ONLY)
-  socket.on("video-control", ({ roomId, action, currentTime }) => {
-    const room = rooms[roomId];
-    if (!room) return;
+    // Video uploaded
+    socket.on('video-uploaded', ({ roomId, username, videoUrl }) => {
+        if (rooms[roomId]) {
+            rooms[roomId].videoUrl = videoUrl;
+            socket.to(roomId).emit('video-uploaded', { username, videoUrl });
+        }
+    });
 
-    if (socket.id !== room.host) {
-      socket.emit("control-denied", { message: "Only host can control video" });
-      return;
-    }
+    // Upload progress - broadcast to other users in room
+    socket.on('upload-progress', ({ roomId, username, progress, speed, eta, filename }) => {
+        if (rooms[roomId]) {
+            // Broadcast to all users in room except sender
+            socket.to(roomId).emit('upload-progress', { 
+                username, 
+                progress, 
+                speed, 
+                eta, 
+                filename 
+            });
+            
+            if (progress % 10 === 0) { // Log every 10%
+                console.log(`📊 [${roomId}] ${username} upload: ${progress}% (${speed})`);
+            }
+        }
+    });
 
-    room.videoState = {
-      isPlaying: action === "play",
-      currentTime,
-    };
+    // Chat message
+    socket.on('chat-message', ({ roomId, username, message }) => {
+        socket.to(roomId).emit('new-message', { username, message });
+        console.log(`💬 [${roomId}] ${username}: ${message}`);
+    });
 
-    socket.to(roomId).emit("sync-video", { action, currentTime });
-  });
-
-  // VIDEO UPLOADED
-  socket.on("video-uploaded", ({ roomId, videoUrl }) => {
-    if (rooms[roomId]) {
-      rooms[roomId].videoUrl = videoUrl;
-      socket.to(roomId).emit("video-uploaded", { videoUrl });
-    }
-  });
-
-  // CHAT
-  socket.on("chat-message", ({ roomId, username, message }) => {
-    socket.to(roomId).emit("new-message", { username, message });
-  });
-
-  // DISCONNECT
-  socket.on("disconnect", () => {
-    const roomId = socket.roomId;
-    if (!roomId || !rooms[roomId]) return;
-
-    rooms[roomId].users = rooms[roomId].users.filter(
-      (u) => u.id !== socket.id
-    );
-
-    if (socket.id === rooms[roomId].host) {
-      if (rooms[roomId].users.length > 0) {
-        const newHost = rooms[roomId].users[0];
-        rooms[roomId].host = newHost.id;
-        rooms[roomId].hostUsername = newHost.username;
-        newHost.isHost = true;
-
-        io.to(roomId).emit("host-changed", {
-          newHostUsername: newHost.username,
-          newHostId: newHost.id,
-          users: rooms[roomId].users,
-        });
-      } else {
-        delete rooms[roomId];
-      }
-    } else {
-      socket.to(roomId).emit("user-left", {
-        username: socket.username,
-        users: rooms[roomId].users,
-      });
-    }
-  });
+    // Disconnect
+    socket.on('disconnect', () => {
+        console.log('❌ User disconnected:', socket.id);
+        
+        const roomId = socket.roomId;
+        if (roomId && rooms[roomId]) {
+            // Remove user from room
+            rooms[roomId].users = rooms[roomId].users.filter(u => u.id !== socket.id);
+            
+            // Check if host left
+            if (socket.id === rooms[roomId].host) {
+                if (rooms[roomId].users.length > 0) {
+                    // Transfer host to next user
+                    const newHost = rooms[roomId].users[0];
+                    rooms[roomId].host = newHost.id;
+                    rooms[roomId].hostUsername = newHost.username;
+                    newHost.isHost = true;
+                    
+                    io.to(roomId).emit('host-changed', { 
+                        newHostUsername: newHost.username,
+                        newHostId: newHost.id,
+                        users: rooms[roomId].users
+                    });
+                    console.log(`👑 Host transferred to ${newHost.username} in room ${roomId}`);
+                } else {
+                    // No users left, delete room
+                    console.log(`🗑️ Room ${roomId} deleted - no users remaining`);
+                    delete rooms[roomId];
+                }
+            } else {
+                // Regular user left
+                io.to(roomId).emit('user-left', { 
+                    username: socket.username, 
+                    users: rooms[roomId].users 
+                });
+            }
+        }
+    });
 });
 
-// ======================
-// FILE UPLOAD ROUTE
-// ======================
-app.post("/upload", upload.single("video"), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "No file uploaded" });
-  }
-
-  res.json({
-    videoUrl: `/uploads/${req.file.filename}`,
-  });
+// File upload endpoint with comprehensive error handling
+app.post('/upload', (req, res) => {
+    upload.single('video')(req, res, (err) => {
+        if (err instanceof multer.MulterError) {
+            // Multer-specific error
+            console.error('❌ Multer error:', err.message);
+            if (err.code === 'LIMIT_FILE_SIZE') {
+                return res.status(400).json({ 
+                    success: false,
+                    error: 'File too large. Maximum size is 5GB.' 
+                });
+            }
+            return res.status(400).json({ 
+                success: false,
+                error: `Upload error: ${err.message}` 
+            });
+        } else if (err) {
+            // Other errors
+            console.error('❌ Upload error:', err);
+            return res.status(400).json({ 
+                success: false,
+                error: err.message || 'Unknown upload error' 
+            });
+        }
+        
+        // Check if file exists
+        if (!req.file) {
+            console.error('❌ No file in request');
+            return res.status(400).json({ 
+                success: false,
+                error: 'No file uploaded' 
+            });
+        }
+        
+        try {
+            const videoUrl = `/uploads/${req.file.filename}`;
+            const fileSizeMB = (req.file.size / (1024 * 1024)).toFixed(2);
+            
+            console.log(`✅ File uploaded successfully:`);
+            console.log(`   📁 Name: ${req.file.originalname}`);
+            console.log(`   💾 Size: ${fileSizeMB} MB`);
+            console.log(`   🔗 URL: ${videoUrl}`);
+            
+            res.status(200).json({ 
+                success: true,
+                videoUrl: videoUrl,
+                filename: req.file.originalname,
+                size: req.file.size
+            });
+        } catch (error) {
+            console.error('❌ Error processing upload:', error);
+            res.status(500).json({ 
+                success: false,
+                error: 'Failed to process uploaded file' 
+            });
+        }
+    });
 });
 
-// ======================
-// ERROR HANDLER
-// ======================
+// Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.message);
-  res.status(500).json({ error: err.message || "Server error" });
+    console.error('❌ Server error:', err.message);
+    
+    // Don't send error response if headers already sent
+    if (res.headersSent) {
+        return next(err);
+    }
+    
+    res.status(500).json({ 
+        success: false,
+        error: err.message || 'Something went wrong!' 
+    });
 });
 
-// ======================
-// START SERVER (RENDER)
-// ======================
+// 404 handler
+app.use((req, res) => {
+    res.status(404).json({ 
+        success: false,
+        error: 'Route not found' 
+    });
+});
+
+// Start server
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+    console.log('');
+    console.log('═══════════════════════════════════════════════════');
+    console.log('🎬 Watch Together Server');
+    console.log('═══════════════════════════════════════════════════');
+    console.log(`🌐 Server running at: http://localhost:${PORT}`);
+    console.log(`📁 Max file size: 5GB`);
+    console.log(`📂 Upload directory: ./uploads`);
+    console.log(`👑 Host control: Enabled`);
+    console.log(`📊 Upload progress: Enabled`);
+    console.log(`✅ Accepts: ALL file types`);
+    console.log('═══════════════════════════════════════════════════');
+    console.log('');
 });
