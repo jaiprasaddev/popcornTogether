@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Watch Together</title>
+    <title>PopCornTogether</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #191919;
             min-height: 100vh;
             color: #fff;
         }
@@ -32,14 +32,14 @@
         }
 
         .welcome-card {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 40px;
             max-width: 450px;
             width: 100%;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .welcome-header {
@@ -52,8 +52,16 @@
             margin-bottom: 10px;
         }
 
+        .welcome-header h1 .popcorn {
+            color: #f9e368;
+        }
+
+        .welcome-header h1 .together {
+            color: #EF3E3A;
+        }
+
         .welcome-header p {
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .input-group {
@@ -63,20 +71,23 @@
         input[type="text"] {
             width: 100%;
             padding: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(249, 227, 104, 0.3);
             border-radius: 10px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
             color: #fff;
             font-size: 16px;
+            transition: all 0.3s;
         }
 
         input[type="text"]::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.5);
         }
 
         input[type="text"]:focus {
             outline: none;
-            border-color: rgba(255, 255, 255, 0.5);
+            border-color: #f9e368;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 15px rgba(249, 227, 104, 0.3);
         }
 
         .btn {
@@ -91,30 +102,33 @@
         }
 
         .btn-primary {
-            background: #667eea;
+            background: linear-gradient(90deg, #EF3E3A, #A65396);
             color: #fff;
             margin-bottom: 15px;
         }
 
         .btn-primary:hover {
-            background: #5568d3;
             transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(239, 62, 58, 0.6);
         }
 
         .btn-secondary {
-            background: #48bb78;
-            color: #fff;
+            background: rgba(249, 227, 104, 0.15);
+            color: #f9e368;
+            border: 1px solid rgba(249, 227, 104, 0.3);
         }
 
         .btn-secondary:hover {
-            background: #38a169;
+            background: rgba(249, 227, 104, 0.25);
+            border-color: #f9e368;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(249, 227, 104, 0.3);
         }
 
         .divider {
             text-align: center;
             margin: 20px 0;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.4);
         }
 
         .main-app {
@@ -122,7 +136,7 @@
         }
 
         .header {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.05);
             padding: 20px;
             border-radius: 15px;
             margin-bottom: 20px;
@@ -131,6 +145,7 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .room-info {
@@ -139,32 +154,43 @@
             gap: 15px;
         }
 
+        .room-info h2 .popcorn {
+            color: #f9e368;
+        }
+
+        .room-info h2 .together {
+            color: #EF3E3A;
+        }
+
         .room-id {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
             padding: 10px 20px;
             border-radius: 8px;
             display: flex;
             align-items: center;
             gap: 10px;
+            border: 1px solid rgba(249, 227, 104, 0.2);
         }
 
         .room-id span {
             font-family: monospace;
             font-size: 18px;
             font-weight: bold;
+            color: #f9e368;
         }
 
         .copy-btn {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(249, 227, 104, 0.2);
             border: none;
             padding: 5px 10px;
             border-radius: 5px;
             cursor: pointer;
-            color: #fff;
+            color: #f9e368;
+            transition: all 0.3s;
         }
 
         .copy-btn:hover {
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(249, 227, 104, 0.3);
         }
 
         .users-count {
@@ -176,7 +202,7 @@
         .status-dot {
             width: 10px;
             height: 10px;
-            background: #48bb78;
+            background: #EF3E3A;
             border-radius: 50%;
             animation: pulse 2s infinite;
         }
@@ -193,9 +219,10 @@
         }
 
         .video-section {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
             padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .video-container {
@@ -203,6 +230,7 @@
             border-radius: 10px;
             overflow: hidden;
             margin-bottom: 20px;
+            border: 1px solid rgba(249, 227, 104, 0.1);
         }
 
         video {
@@ -224,6 +252,7 @@
             width: 80px;
             height: 80px;
             margin-bottom: 15px;
+            color: #f9e368;
         }
 
         .video-controls {
@@ -233,12 +262,23 @@
 
         .btn-upload {
             flex: 1;
-            background: #667eea;
+            background: linear-gradient(90deg, #EF3E3A, #A65396);
+        }
+
+        .btn-upload:hover {
+            box-shadow: 0 6px 15px rgba(239, 62, 58, 0.6);
         }
 
         .btn-play {
-            background: #48bb78;
+            background: #f9e368;
+            color: #191919;
             padding: 15px 30px;
+            font-weight: 700;
+        }
+
+        .btn-play:hover {
+            background: #fce98b;
+            box-shadow: 0 4px 12px rgba(249, 227, 104, 0.5);
         }
 
         .upload-progress {
@@ -247,6 +287,7 @@
             border-radius: 10px;
             padding: 20px;
             margin-top: 15px;
+            border: 1px solid rgba(249, 227, 104, 0.2);
         }
 
         .upload-progress.active {
@@ -267,18 +308,19 @@
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 300px;
+            color: #f9e368;
         }
 
         .progress-percentage {
             font-weight: 700;
             font-size: 18px;
-            color: #48bb78;
+            color: #EF3E3A;
         }
 
         .progress-bar-container {
             width: 100%;
             height: 8px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             overflow: hidden;
             margin-bottom: 10px;
@@ -286,10 +328,11 @@
 
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #48bb78, #38a169);
+            background: linear-gradient(90deg, #EF3E3A, #A65396);
             border-radius: 10px;
             transition: width 0.3s ease;
             width: 0%;
+            box-shadow: 0 0 10px rgba(239, 62, 58, 0.5);
         }
 
         .progress-stats {
@@ -300,7 +343,7 @@
         }
 
         .progress-speed {
-            color: #667eea;
+            color: #f9e368;
             font-weight: 600;
         }
 
@@ -315,9 +358,10 @@
         }
 
         .users-panel, .chat-panel {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
             padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .panel-header {
@@ -327,6 +371,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            color: #f9e368;
         }
 
         .user-list {
@@ -340,12 +385,13 @@
             align-items: center;
             gap: 10px;
             padding: 8px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .user-badge {
-            background: #667eea;
+            background: linear-gradient(90deg, #EF3E3A, #A65396);
             padding: 2px 8px;
             border-radius: 5px;
             font-size: 12px;
@@ -356,26 +402,28 @@
             overflow-y: auto;
             margin-bottom: 15px;
             padding: 10px;
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .message {
             margin-bottom: 10px;
             padding: 8px;
             border-radius: 8px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .message.system {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(249, 227, 104, 0.1);
             font-style: italic;
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(249, 227, 104, 0.8);
+            border: 1px solid rgba(249, 227, 104, 0.2);
         }
 
         .message-user {
             font-weight: 600;
-            color: #667eea;
+            color: #EF3E3A;
             margin-bottom: 3px;
         }
 
@@ -388,22 +436,31 @@
             flex: 1;
             padding: 10px;
             border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(249, 227, 104, 0.3);
+            background: rgba(255, 255, 255, 0.08);
             color: #fff;
+            transition: all 0.3s;
+        }
+
+        .chat-input input:focus {
+            outline: none;
+            border-color: #f9e368;
+            box-shadow: 0 0 10px rgba(249, 227, 104, 0.3);
         }
 
         .btn-send {
-            background: #48bb78;
+            background: linear-gradient(90deg, #EF3E3A, #A65396);
             color: #fff;
             border: none;
             padding: 10px 20px;
             border-radius: 8px;
             cursor: pointer;
+            transition: all 0.3s;
         }
 
         .btn-send:hover {
-            background: #38a169;
+            box-shadow: 0 4px 12px rgba(239, 62, 58, 0.6);
+            transform: translateY(-2px);
         }
 
         #videoFile {
@@ -418,6 +475,20 @@
             height: 60vh;
         }
 
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #EF3E3A, #A65396);
+            border-radius: 10px;
+        }
+
         @media (max-width: 1024px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -429,7 +500,7 @@
     <div class="welcome-screen" id="welcomeScreen">
         <div class="welcome-card">
             <div class="welcome-header">
-                <h1>🎬 Watch Together</h1>
+                <h1><span class="popcorn">PopCorn</span><span class="together">Together</span></h1>
                 <p>Watch videos with friends in sync</p>
             </div>
             
@@ -453,7 +524,7 @@
         <div class="container">
             <div class="header">
                 <div class="room-info">
-                    <h2>Watch Together</h2>
+                    <h2><span class="popcorn">PopCorn</span> <span class="together">Together</span></h2>
                     <div class="room-id">
                         <span>Room: <span id="displayRoomId"></span></span>
                         <button class="copy-btn" onclick="copyRoomId()">📋 Copy</button>
