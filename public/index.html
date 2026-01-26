@@ -13,21 +13,36 @@
   <body>
    
     <header>
-      <a class="lg" href="#">
-        <span class="pop">PopCorn</span><span class="together">Together</span>
-      </a>
-      <nav>
-        <ul class="nav_links">
-          <li><a href="index.html" class="active">Home</a></li>
-          <li><a href="movies.html">Movies</a></li>
-          <li><a href="room.html">Upload and Watch</a></li>
-          <li><a href="youtube.html">Watch Youtube</a></li>
-          <li><a href="services.html">Services</a></li>
-        </ul>
+  <a class="lg" href="#">
+    <span class="pop">PopCorn</span><span class="together">Together</span>
+  </a>
+  
+  <!-- Mobile Menu Toggle -->
+  <div class="mobile-menu-toggle" onclick="toggleMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  
+  <nav id="nav">
+    <ul class="nav_links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="movies.html">Movies</a></li>
+      <li><a href="upload.html">Upload and Watch</a></li>
+      <li><a href="youtube.html">Watch Youtube</a></li>
+      <li><a href="services.html">Services</a></li>
+    </ul>
+  </nav>
+  
+  <a class="cta" href="/public/Login.html"><button>Login</button></a>
+</header>
 
-      </nav>
-      <a class="cta" href="/public/Login.html"><button>Login</button></a>
-    </header>
+<script>
+function toggleMenu() {
+  const nav = document.getElementById('nav');
+  nav.classList.toggle('active');
+}
+</script>
 
     <section class="hero">
       <div class="hero-Video">
