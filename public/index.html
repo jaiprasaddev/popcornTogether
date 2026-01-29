@@ -34,7 +34,13 @@
     </ul>
   </nav>
   
-  <a class="cta" href="/Login.html"><button>Login</button></a>
+  <div class="auth-area">
+  <span id="username" style="display:none;"></span>
+  <a class="cta" id="loginBtnNav" href="/Login.html">
+    <button>Login</button>
+  </a>
+</div>
+
 </header>
 
 <script>
@@ -188,6 +194,46 @@ function toggleMenu() {
           <p>© 2025 PopCornTogether. All rights reserved.</p>
         </div>
     </footer>
+
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+<script>
+  // 🔥 SAME firebase config jo tum login page me use kar rahe ho
+  const firebaseConfig = {
+    apiKey: "AIzaSyBMz7pxtjBBwYajEfEhBhF7ADYOgEQX_Po",
+    authDomain: "popcorntogether-fd170.firebaseapp.com",
+    projectId: "popcorntogether-fd170",
+    storageBucket: "popcorntogether-fd170.appspot.com",
+    messagingSenderId: "450280562009",
+    appId: "1:450280562009:web:9774f54f522f6a34378048"
+  };
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+
+  const loginBtn = document.getElementById("loginBtnNav");
+  const usernameSpan = document.getElementById("username");
+
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      // user logged in
+      loginBtn.style.display = "none";
+      usernameSpan.style.display = "inline-block";
+
+      // email se name nikalna
+      const name = user.email.split("@")[0];
+      usernameSpan.innerText = `👤 ${name}`;
+    } else {
+      // user logged out
+      loginBtn.style.display = "inline-block";
+      usernameSpan.style.display = "none";
+    }
+  });
+</script>
+
 
   </body>
 </html>
