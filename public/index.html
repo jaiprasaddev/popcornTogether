@@ -10,49 +10,54 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
     />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   </head>
+
   <body>
-   
     <header>
-  <a class="lg" href="/public/index.html">
-    <span class="pop">PopCorn</span><span class="together">Together</span>
-  </a>
-  
-  <!-- Mobile Menu Toggle -->
-  <div class="mobile-menu-toggle" onclick="toggleMenu()">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
-  
-  <nav id="nav">
-    <ul class="nav_links">
-      <li><a href="/index.html" class="active">Home</a></li>
-      <li><a href="/movies.html">Movies</a></li>
-      <li><a href="/room.html">Upload and Watch</a></li>
-      <li><a href="/youtube.html">Watch Youtube</a></li>
-      <li><a href="/services.html">Services</a></li>
-    </ul>
-  </nav>
-  
-  <div class="auth-area">
-  <span id="username" style="display:none;"></span>
-  <a class="cta" id="loginBtnNav" href="/Login.html">
-    <button>Login</button>
-  </a>
-</div>
+      <a class="lg" href="/index.html">
+        <span class="pop">PopCorn</span><span class="together">Together</span>
+      </a>
 
-</header>
+      <!-- Mobile Menu Toggle -->
+      <div class="mobile-menu-toggle" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
 
-<script>
-function toggleMenu() {
-  const nav = document.getElementById('nav');
-  nav.classList.toggle('active');
-}
-</script>
+      <nav id="nav">
+        <ul class="nav_links">
+          <li><a href="/index.html" class="active">Home</a></li>
+          <li><a href="/movies.html">Movies</a></li>
+          <li><a href="/room.html">Upload and Watch</a></li>
+          <li><a href="/youtube.html">Watch Youtube</a></li>
+          <li><a href="/services.html">Services</a></li>
+        </ul>
+      </nav>
 
+      <!-- 🔥 AUTH AREA (UPDATED ONLY THIS) -->
+      <div class="auth-area">
+        <div id="userBox" style="display:none; align-items:center; gap:10px;">
+          <span id="username"></span>
+          <button id="logoutBtn">Logout</button>
+        </div>
+
+        <a class="cta" id="loginBtnNav" href="/Login.html">
+          <button>Login</button>
+        </a>
+      </div>
+    </header>
+
+    <script>
+      function toggleMenu() {
+        const nav = document.getElementById("nav");
+        nav.classList.toggle("active");
+      }
+    </script>
+
+    <!-- ================= HERO ================= -->
     <section class="hero">
       <div class="hero-Video">
         <video autoplay loop muted playsinline src="/Asset/videos/landing.mp4">
@@ -78,18 +83,17 @@ function toggleMenu() {
       </div>
     </section>
 
+    <!-- ================= FEATURES ================= -->
     <section class="feature">
       <h1>Features</h1>
 
       <div class="feature-container">
         <div class="feature-card">
           <div class="feature-card-inner">
-            <!-- Front side -->
             <div class="feature-card-front">
               <i class="fa-solid fa-circle-play"></i>
               <h2>Sync Playback</h2>
             </div>
-            <!-- Back side -->
             <div class="feature-card-back">
               <p>
                 No more countdowns or delays. Every pause, play, or skip happens
@@ -138,7 +142,7 @@ function toggleMenu() {
             <div class="feature-card-back">
               <p>
                 From music videos to lectures, enjoy millions of YouTube videos
-                together in real-time. Perfect for fun, study, or events
+                together in real-time.
               </p>
             </div>
           </div>
@@ -146,6 +150,7 @@ function toggleMenu() {
       </div>
     </section>
 
+    <!-- ================= HOW IT WORKS ================= -->
     <section class="how-it-works">
       <h1>How It Works</h1>
       <div class="steps-container">
@@ -168,75 +173,61 @@ function toggleMenu() {
       </div>
     </section>
 
+    <!-- ================= FOOTER ================= -->
     <footer class="footer">
-        <div class="footer-container">
-          <div class="footer-left">
-            <h2><span class="pop">PopCorn</span><span class="together">Together</span></h2>
-            <p>Stream movies together, anywhere, anytime.</p>
-          </div>
-          <div class="footer-middle">
-            <h3>Quick Links</h3>
-            <ul>
-              <li><a href="#">Home</a></li>
-              <li><a href="#">Features</a></li>
-              <li><a href="#">How It Works</a></li>
-              <li><a href="#">Services</a></li>
-            </ul>
-          </div>
-          <div class="footer-right">
-            <h3>Follow Us</h3>
-            <div class="socials">
-              <a href="#"><i class="fa-brands fa-facebook"></i></a>
-              <a href="#"><i class="fa-brands fa-instagram"></i></a>
-              <a href="#"><i class="fa-brands fa-twitter"></i></a>
-              <a href="#"><i class="fa-brands fa-youtube"></i></a>
-            </div>
-          </div>
+      <div class="footer-container">
+        <div class="footer-left">
+          <h2><span class="pop">PopCorn</span><span class="together">Together</span></h2>
+          <p>Stream movies together, anywhere, anytime.</p>
         </div>
-        <div class="footer-bottom">
-          <p>© 2025 PopCornTogether. All rights reserved.</p>
-        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2025 PopCornTogether. All rights reserved.</p>
+      </div>
     </footer>
 
-
+    <!-- ================= FIREBASE ================= -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
-<script>
-  // 🔥 SAME firebase config jo tum login page me use kar rahe ho
-  const firebaseConfig = {
-    apiKey: "AIzaSyBMz7pxtjBBwYajEfEhBhF7ADYOgEQX_Po",
-    authDomain: "popcorntogether-fd170.firebaseapp.com",
-    projectId: "popcorntogether-fd170",
-    storageBucket: "popcorntogether-fd170.appspot.com",
-    messagingSenderId: "450280562009",
-    appId: "1:450280562009:web:9774f54f522f6a34378048"
-  };
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyBMz7pxtjBBwYajEfEhBhF7ADYOgEQX_Po",
+        authDomain: "popcorntogether-fd170.firebaseapp.com",
+        projectId: "popcorntogether-fd170",
+        storageBucket: "popcorntogether-fd170.appspot.com",
+        messagingSenderId: "450280562009",
+        appId: "1:450280562009:web:9774f54f522f6a34378048"
+      };
 
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
 
-  const loginBtn = document.getElementById("loginBtnNav");
-  const usernameSpan = document.getElementById("username");
+      const loginBtn = document.getElementById("loginBtnNav");
+      const userBox = document.getElementById("userBox");
+      const usernameSpan = document.getElementById("username");
+      const logoutBtn = document.getElementById("logoutBtn");
 
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      // user logged in
-      loginBtn.style.display = "none";
-      usernameSpan.style.display = "inline-block";
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          loginBtn.style.display = "none";
+          userBox.style.display = "flex";
 
-      // email se name nikalna
-      const name = user.email.split("@")[0];
-      usernameSpan.innerText = `👤 ${name}`;
-    } else {
-      // user logged out
-      loginBtn.style.display = "inline-block";
-      usernameSpan.style.display = "none";
-    }
-  });
-</script>
+          const name = user.email.split("@")[0];
+          usernameSpan.innerText = "👤 " + name;
+        } else {
+          loginBtn.style.display = "inline-block";
+          userBox.style.display = "none";
+        }
+      });
 
-
+      logoutBtn.addEventListener("click", () => {
+        firebase.auth().signOut().then(() => {
+          window.location.href = "/index.html";
+        });
+      });
+    </script>
   </body>
 </html>
