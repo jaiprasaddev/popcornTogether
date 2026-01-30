@@ -991,11 +991,15 @@
 
   firebase.auth().onAuthStateChanged((user) => {
     if (!user) {
-      // ❌ Not logged in → redirect
-      window.location.href = "/Login.html";
+      // ❌ not logged in → redirect (NO BACK POSSIBLE)
+      window.location.replace("/Login.html");
+    } else {
+      // ✅ logged in → show page
+      document.body.style.display = "block";
     }
   });
 </script>
+
 
 </body>
 </html>
