@@ -172,11 +172,9 @@ button:hover {
 }
 
 /* ========== MOBILE AUTH SECTION (INSIDE HAMBURGER) ========== */
+/* CRITICAL: Hide mobile auth section on desktop to prevent duplicates */
 .mobile-auth-section {
-    display: none; /* Hidden by default, shown only on mobile */
-    padding: 20px 0 10px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin-top: 10px;
+    display: none !important; /* Hidden on desktop by default */
 }
 
 .mobile-login-wrapper,
@@ -515,7 +513,7 @@ button:hover {
         font-size: 20px;
     }
     
-    /* Hide desktop auth area on mobile */
+    /* CRITICAL: Hide desktop auth area on mobile to prevent duplicates */
     .desktop-auth {
         display: none !important;
     }
@@ -564,9 +562,12 @@ button:hover {
         width: 100%;
     }
     
-    /* Show mobile auth section inside hamburger menu */
+    /* CRITICAL: Show mobile auth section inside hamburger menu on mobile only */
     .mobile-auth-section {
-        display: block;
+        display: block !important;
+        padding: 20px 0 10px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 10px;
     }
     
     /* ========== HERO SECTION MOBILE ========== */

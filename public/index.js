@@ -156,7 +156,6 @@ window.addEventListener("resize", () => {
 });
 
 // ========== PREVENT BODY SCROLL WHEN MENU IS OPEN ==========
-
 const observer = new MutationObserver(() => {
   if (nav.classList.contains("active")) {
     document.body.style.overflow = "hidden";
