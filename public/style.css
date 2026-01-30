@@ -113,17 +113,32 @@ button:hover {
     box-shadow: 0 6px 15px rgba(239, 62, 58, 0.6);
 }
 
+.cta {
+    display: inline-block;
+    text-decoration: none;
+}
+
 /* ========== DESKTOP AUTH AREA ========== */
 .desktop-auth {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
 }
 
 .desktop-user-box {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
+}
+
+#desktopUsername {
+    font-size: 16px;
+    font-weight: 600;
+    color: #f9e368;
+    padding: 8px 15px;
+    background: rgba(249, 227, 104, 0.1);
+    border-radius: 5px;
+    white-space: nowrap;
 }
 
 /* ========== MOBILE MENU TOGGLE (HAMBURGER) ========== */

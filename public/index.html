@@ -57,12 +57,14 @@
       
       <!-- Desktop auth area (visible only on desktop) -->
       <div class="auth-area desktop-auth">
+        <!-- Logged-in user display -->
         <div id="desktopUserBox" class="desktop-user-box" style="display:none;">
           <span id="desktopUsername"></span>
           <button id="desktopLogoutBtn">Logout</button>
         </div>
 
-        <a class="cta" id="desktopLoginBtn" href="/Login.html">
+        <!-- Login button (shown when logged out) -->
+        <a class="cta" id="desktopLoginBtn" href="/Login.html" style="display:inline-block;">
           <button>Login</button>
         </a>
       </div>

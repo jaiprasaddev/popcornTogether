@@ -156,11 +156,7 @@ window.addEventListener("resize", () => {
 });
 
 // ========== PREVENT BODY SCROLL WHEN MENU IS OPEN ==========
-/**
- * Optional: Prevent body scrolling when mobile menu is open
- * Uncomment if you want this behavior
- */
-/*
+
 const observer = new MutationObserver(() => {
   if (nav.classList.contains("active")) {
     document.body.style.overflow = "hidden";
@@ -173,4 +169,3 @@ observer.observe(nav, {
   attributes: true,
   attributeFilter: ["class"]
 });
-*/
