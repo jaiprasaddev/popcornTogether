@@ -38,9 +38,16 @@
   </nav>
   
   <div class="auth-area">
-  <span id="username" style="display:none;"></span>
+  <div id="userBox" style="display:none; align-items:center; gap:10px;">
+    <span id="username"></span>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
   <a class="cta" id="loginBtnNav" href="/Login.html">
     <button>Login</button>
+  </a>
+</div>
+
   </a>
 </div>
 
@@ -218,23 +225,32 @@ function toggleMenu() {
   }
 
   const loginBtn = document.getElementById("loginBtnNav");
-  const usernameSpan = document.getElementById("username");
+const usernameSpan = document.getElementById("username");
+const userBox = document.getElementById("userBox");
+const logoutBtn = document.getElementById("logoutBtn");
+
 
   firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      // user logged in
-      loginBtn.style.display = "none";
-      usernameSpan.style.display = "inline-block";
+  if (user) {
+    loginBtn.style.display = "none";
+    userBox.style.display = "flex";
 
-      // email se name nikalna
-      const name = user.email.split("@")[0];
-      usernameSpan.innerText = `👤 ${name}`;
-    } else {
-      // user logged out
-      loginBtn.style.display = "inline-block";
-      usernameSpan.style.display = "none";
-    }
+    const name = user.email.split("@")[0];
+    usernameSpan.innerText = `👤 ${name}`;
+  } else {
+    loginBtn.style.display = "inline-block";
+    userBox.style.display = "none";
+  }
+});
+
+
+logoutBtn.addEventListener("click", () => {
+  firebase.auth().signOut().then(() => {
+    window.location.href = "/index.html";
   });
+});
+
+
 </script>
 
 
