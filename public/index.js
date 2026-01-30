@@ -56,6 +56,27 @@ navLinks.forEach(link => {
   });
 });
 
+
+// get started login
+const getStartedBtn = document.getElementById("getStartedBtn");
+
+if (getStartedBtn) {
+  getStartedBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const user = firebase.auth().currentUser;
+
+    if (user) {
+      // ✅ logged in → go to room
+      window.location.href = "/room.html";
+    } else {
+      // ❌ not logged in → go to login
+      window.location.href = "/Login.html";
+    }
+  });
+}
+
+
 // ========== CLOSE MENU WHEN CLICKING OUTSIDE ==========
 /**
  * Close mobile menu when user clicks outside of it
