@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap');
 
-*{
+* {
     font-family: "Montserrat", sans-serif;
     margin: 0;
     padding: 0;
@@ -15,7 +15,7 @@ body {
     padding-right: 5%; 
 }
 
-.imghero{
+.imghero {
   height: 100%;
   width: 100%;
   background-size: cover;
@@ -23,15 +23,15 @@ body {
   opacity: 2%;
 }
 
-a{
+a {
     font-size: 16px;
     font-weight: 500;
     color: #edf0f1;
     text-decoration: none;
 }
 
-/* Navbar Start */
-header{
+/* ========== NAVBAR STYLES ========== */
+header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -45,7 +45,7 @@ header{
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.lg{
+.lg {
     cursor: pointer;
     font-size: 24px;
     font-weight: 700;
@@ -59,16 +59,18 @@ header{
     color: #EF3E3A;
 }
 
-.nav_links{
+.nav_links {
     list-style: none;
+    display: flex;
+    align-items: center;
 }
 
-.nav_links li{
+.nav_links li {
     display: inline-block;
     padding: 0px 20px;
 }
 
-.nav_links li a{
+.nav_links li a {
     transition: all 0.3s ease 0s;
 }
 
@@ -88,12 +90,12 @@ header{
   border-radius: 2px;
 }
 
-.nav_links li a:hover{
+.nav_links li a:hover {
     color: #EF3E3A;
     text-shadow: 0 6px 15px rgba(239, 62, 58, 0.6);
 }
 
-button{
+button {
     font-size: 16px;
     font-weight: 700;
     color: #fff;
@@ -106,17 +108,31 @@ button{
     cursor: pointer;
 }
 
-button:hover{
+button:hover {
     transform: scale(1.05);
     box-shadow: 0 6px 15px rgba(239, 62, 58, 0.6);
 }
 
-/* Mobile menu toggle (hidden by default) */
+/* ========== DESKTOP AUTH AREA ========== */
+.desktop-auth {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.desktop-user-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ========== MOBILE MENU TOGGLE (HAMBURGER) ========== */
 .mobile-menu-toggle {
     display: none;
     flex-direction: column;
     cursor: pointer;
     gap: 5px;
+    z-index: 1001;
 }
 
 .mobile-menu-toggle span {
@@ -126,9 +142,63 @@ button:hover{
     border-radius: 3px;
     transition: 0.3s;
 }
-/* Navbar End*/
 
-/* Hero-Section Start*/
+/* Hamburger animation when menu is open */
+.mobile-menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(7px, 7px);
+}
+
+.mobile-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+}
+
+/* ========== MOBILE AUTH SECTION (INSIDE HAMBURGER) ========== */
+.mobile-auth-section {
+    display: none; /* Hidden by default, shown only on mobile */
+    padding: 20px 0 10px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 10px;
+}
+
+.mobile-login-wrapper,
+.mobile-user-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.mobile-login-btn {
+    width: 80%;
+    text-align: center;
+}
+
+.mobile-login-btn button {
+    width: 100%;
+    padding: 12px 25px;
+}
+
+.mobile-username {
+    font-size: 18px;
+    font-weight: 600;
+    color: #f9e368;
+    padding: 10px 20px;
+    background: rgba(249, 227, 104, 0.1);
+    border-radius: 5px;
+    text-align: center;
+}
+
+.mobile-logout-btn {
+    width: 80%;
+    padding: 12px 25px;
+}
+
+/* ========== HERO SECTION ========== */
 .hero {
     display: flex;
     align-items: center;
@@ -138,18 +208,18 @@ button:hover{
     color: white;
 }
 
-.hero-Video{
+.hero-Video {
     flex: 1;
 }
 
-.hero-Video video{
+.hero-Video video {
     width: 100%;
     height: auto;
     border-radius: 5px;
     box-shadow: 0 5px 20px rgba(0,0,0,2);
 }
 
-.hero-Text{
+.hero-Text {
     flex: 1;
     text-align: left;
 }
@@ -161,7 +231,7 @@ button:hover{
     line-height: 1.2;
 }
 
-.hero-Text h1 span{
+.hero-Text h1 span {
     color: #EF3E3A;
 }
 
@@ -182,8 +252,8 @@ button:hover{
     box-shadow: 0 6px 15px rgba(239, 62, 58, 0.6);
 }
 
-/* Feature Section */
-.feature{
+/* ========== FEATURE SECTION ========== */
+.feature {
     padding-bottom: 80px;
     padding-top: 80px;
 }
@@ -256,8 +326,8 @@ button:hover{
   margin-top: 10px;    
 }
 
-/* How It Works */
-.how-it-works{
+/* ========== HOW IT WORKS ========== */
+.how-it-works {
     padding-bottom: 80px;
     padding-top: 80px;
 }
@@ -300,7 +370,7 @@ button:hover{
   text-align: center;
 }
 
-/* Footer */
+/* ========== FOOTER ========== */
 .footer {
     padding-top: 80px;
   background: #111;
@@ -413,7 +483,7 @@ button:hover{
     }
 }
 
-/* Mobile (768px and below) */
+/* ========== MOBILE (768px and below) ========== */
 @media screen and (max-width: 768px) {
     body {
         padding-top: 70px;
@@ -421,7 +491,7 @@ button:hover{
         padding-right: 3%;
     }
     
-    /* Navbar mobile */
+    /* ========== NAVBAR MOBILE ========== */
     header {
         padding: 12px 3%;
     }
@@ -430,6 +500,17 @@ button:hover{
         font-size: 20px;
     }
     
+    /* Hide desktop auth area on mobile */
+    .desktop-auth {
+        display: none !important;
+    }
+    
+    /* Show hamburger menu toggle */
+    .mobile-menu-toggle {
+        display: flex;
+    }
+    
+    /* Navigation menu starts hidden off-screen */
     nav {
         position: fixed;
         top: 70px;
@@ -439,16 +520,19 @@ button:hover{
         background: #191919;
         transition: left 0.3s ease;
         border-top: 1px solid rgba(255, 255, 255, 0.2);
+        overflow-y: auto;
     }
     
+    /* When menu is active, slide it in */
     nav.active {
         left: 0;
     }
     
+    /* Stack nav links vertically */
     .nav_links {
         flex-direction: column;
         padding: 20px 0;
-        height: 100%;
+        width: 100%;
     }
     
     .nav_links li {
@@ -465,19 +549,12 @@ button:hover{
         width: 100%;
     }
     
-    .cta {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 1001;
+    /* Show mobile auth section inside hamburger menu */
+    .mobile-auth-section {
+        display: block;
     }
     
-    .mobile-menu-toggle {
-        display: flex;
-    }
-    
-    /* Hero Section Mobile */
+    /* ========== HERO SECTION MOBILE ========== */
     .hero {
         flex-direction: column-reverse;
         gap: 25px;
@@ -506,7 +583,7 @@ button:hover{
         padding: 10px 25px;
     }
     
-    /* Footer Mobile */
+    /* ========== FOOTER MOBILE ========== */
     .footer-container {
         flex-direction: column;
         gap: 30px;
@@ -520,7 +597,7 @@ button:hover{
     }
 }
 
-/* Small Mobile (480px and below) */
+/* ========== SMALL MOBILE (480px and below) ========== */
 @media screen and (max-width: 480px) {
     .hero-Text h1 {
         font-size: 1.75rem;
