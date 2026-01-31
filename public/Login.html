@@ -13,17 +13,15 @@
 
     <!-- LOGIN -->
     <div class="form-box login">
-        <form action="#">
+        <form>
             <h1>Login</h1>
 
             <div class="input-box">
-                <!-- 🔥 ID added -->
                 <input type="email" id="loginEmail" placeholder="Email" required>
                 <i class="fa-solid fa-user"></i>
             </div>
 
             <div class="input-box">
-                <!-- 🔥 ID added -->
                 <input type="password" id="loginPassword" placeholder="Password" required>
                 <i class="fa-solid fa-lock"></i>
             </div>
@@ -32,8 +30,8 @@
                 <a href="#">Forgot Password?</a>
             </div>
 
-            <!-- 🔥 ID added -->
-            <button type="submit" class="btn" id="loginBtn">Login</button>
+            <!-- 🔥 FIXED -->
+            <button type="button" class="btn" id="loginBtn">Login</button>
 
             <p>Or login with social platforms</p>
             <div class="social-icons">
@@ -47,29 +45,26 @@
 
     <!-- REGISTER -->
     <div class="form-box register">
-        <form action="#">
+        <form>
             <h1>Registration</h1>
 
             <div class="input-box">
-                <!-- (optional – future use) -->
                 <input type="text" id="registerUsername" placeholder="Username" required>
                 <i class="fa-solid fa-user"></i>
             </div>
 
             <div class="input-box">
-                <!-- 🔥 ID added -->
                 <input type="email" id="registerEmail" placeholder="Email" required>
                 <i class="fa-solid fa-envelope"></i>
             </div>
 
             <div class="input-box">
-                <!-- 🔥 ID added -->
                 <input type="password" id="registerPassword" placeholder="Password" required>
                 <i class="fa-solid fa-lock"></i>
             </div>
 
-            <!-- 🔥 ID added -->
-            <button type="submit" class="btn" id="registerBtn">Register</button>
+            <!-- 🔥 FIXED -->
+            <button type="button" class="btn" id="registerBtn">Register</button>
 
             <p>Or register with social platforms</p>
             <div class="social-icons">
@@ -98,15 +93,10 @@
 
 </div>
 
-<!-- YOUR EXISTING JS -->
-
-
-<!-- FIREBASE SDK (AS YOU ADDED) -->
-<!-- Firebase SDKs -->
+<!-- FIREBASE SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
 
 <script>
   const firebaseConfig = {
@@ -118,46 +108,35 @@
     appId: "1:450280562009:web:9774f54f522f6a34378048"
   };
 
-  // ❗ IMPORTANT: prevent double init
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
-
-  const auth = firebase.auth();
-  window.db = firebase.firestore();
-
 </script>
 
 <script>
-    document.getElementById("loginBtn").addEventListener("click", function (e) {
-    e.preventDefault();
-
-    const email = document.getElementById("loginEmail").value.trim();
-    const password = document.getElementById("loginPassword").value;
+  // LOGIN
+  document.getElementById("loginBtn").addEventListener("click", function () {
+    const email = loginEmail.value.trim();
+    const password = loginPassword.value;
 
     if (!email || !password) {
-        alert("Email and password required");
-        return;
+      alert("Email and password required");
+      return;
     }
 
     firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(() => {
-            alert("Login Successful ✅");
-            window.location.href = "/index.html";
-        })
-        .catch((error) => {
-            alert(error.message);
-        });
-});
+      .then(() => {
+        alert("Login Successful ✅");
+        window.location.href = "/index.html";
+      })
+      .catch(err => alert(err.message));
+  });
 
-
-
-  document.getElementById("registerBtn").addEventListener("click", async (e) => {
-    e.preventDefault();
-
-    const username = document.getElementById("registerUsername").value.trim();
-    const email = document.getElementById("registerEmail").value.trim();
-    const password = document.getElementById("registerPassword").value;
+  // REGISTER
+  document.getElementById("registerBtn").addEventListener("click", async function () {
+    const username = registerUsername.value.trim();
+    const email = registerEmail.value.trim();
+    const password = registerPassword.value;
 
     if (!username || !email || !password) {
       alert("All fields required");
@@ -165,12 +144,10 @@
     }
 
     try {
-      const cred = await firebase
-        .auth()
+      const cred = await firebase.auth()
         .createUserWithEmailAndPassword(email, password);
 
       const user = cred.user;
-      console.log("Auth user created:", user.uid);
 
       await firebase.firestore().collection("users").doc(user.uid).set({
         username,
@@ -183,15 +160,12 @@
 
     } catch (err) {
       alert(err.message);
-      console.error("REGISTER ERROR:", err);
+      console.error(err);
     }
   });
 </script>
 
-
-<!-- LAST -->
 <script src="script.js"></script>
-
 
 </body>
 </html>
