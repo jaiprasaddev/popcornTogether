@@ -44,37 +44,39 @@ document.getElementById("loginBtn").addEventListener("click", function (e) {
 // ===========================
 // REGISTER (FIXED VERSION)
 // ===========================
-document.getElementById("registerBtn").addEventListener("click", function (e) {
+document.getElementById("registerBtn").addEventListener("click", async function (e) {
     e.preventDefault();
 
-    const username = document.getElementById("registerUsername").value.trim();
-    const email = document.getElementById("registerEmail").value.trim();
-    const password = document.getElementById("registerPassword").value;
+    try {
+        const username = document.getElementById("registerUsername").value.trim();
+        const email = document.getElementById("registerEmail").value.trim();
+        const password = document.getElementById("registerPassword").value;
 
-    if (!username || !email || !password) {
-        alert("All fields are required");
-        return;
-    }
+        if (!username || !email || !password) {
+            alert("All fields are required");
+            return;
+        }
 
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            const user = userCredential.user;
-            console.log("Auth user created:", user.uid);
-            console.log("Saving user to Firestore...");
+        const userCredential = await firebase
+            .auth()
+            .createUserWithEmailAndPassword(email, password);
 
-            // 🔥 Firestore me user save (RETURN IS IMPORTANT)
-            return db.collection("users").doc(user.uid).set({
-                username: username,
-                email: user.email,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        })
-        .then(() => {
-            alert("Registration Successful 🎉");
-            container.classList.remove("active"); // back to login
-        })
-        .catch((error) => {
-            console.error("REGISTER ERROR:", error);
-            alert(error.message);
+        const user = userCredential.user;
+        console.log("Auth user created:", user.uid);
+
+        await db.collection("users").doc(user.uid).set({
+            username: username,
+            email: user.email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
+
+        console.log("Firestore write SUCCESS");
+
+        alert("Registration Successful 🎉");
+        container.classList.remove("active");
+
+    } catch (error) {
+        console.error("REGISTER ERROR:", error);
+        alert(error.message);
+    }
 });

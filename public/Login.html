@@ -102,11 +102,10 @@
 
 
 <!-- FIREBASE SDK (AS YOU ADDED) -->
+<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
-
 
 <script>
   const firebaseConfig = {
@@ -118,12 +117,18 @@
     appId: "1:450280562009:web:9774f54f522f6a34378048"
   };
 
-  firebase.initializeApp(firebaseConfig);
+  // ❗ IMPORTANT: prevent double init
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
 
+  const auth = firebase.auth();
   const db = firebase.firestore();
 </script>
 
-<script src="/script.js"></script>
+<!-- LAST -->
+<script src="script.js"></script>
+
 
 </body>
 </html>
