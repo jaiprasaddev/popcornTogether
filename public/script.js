@@ -60,6 +60,7 @@ document.getElementById("registerBtn").addEventListener("click", function (e) {
         .then((userCredential) => {
             const user = userCredential.user;
             console.log("Auth user created:", user.uid);
+            console.log("Saving user to Firestore...");
 
             // 🔥 Firestore me user save (RETURN IS IMPORTANT)
             return db.collection("users").doc(user.uid).set({
