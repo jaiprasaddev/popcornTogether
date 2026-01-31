@@ -1,39 +1,54 @@
-// Toggle animation (tumhara existing code)
-const container = document.querySelector('.container')
-const registerToggleBtn = document.querySelector('.register-btn')
-const loginToggleBtn = document.querySelector('.login-btn')
+// ===========================
+// TOGGLE ANIMATION (AS IT IS)
+// ===========================
+const container = document.querySelector('.container');
+const registerToggleBtn = document.querySelector('.register-btn');
+const loginToggleBtn = document.querySelector('.login-btn');
 
 registerToggleBtn.addEventListener('click', () => {
-    container.classList.add('active')
-})
+    container.classList.add('active');
+});
 
 loginToggleBtn.addEventListener('click', () => {
-    container.classList.remove('active')
-})
+    container.classList.remove('active');
+});
 
-/* ===========================
-   FIREBASE AUTH LOGIC
-=========================== */
 
+// ===========================
+// FIREBASE INIT (IMPORTANT)
+// ===========================
+// ⚠️ Ye line firebase.initializeApp(...) ke BAAD honi chahiye
+const db = firebase.firestore();
+
+
+// ===========================
 // LOGIN
+// ===========================
 document.getElementById("loginBtn").addEventListener("click", function (e) {
     e.preventDefault();
 
-    const email = document.getElementById("loginEmail").value;
+    const email = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value;
 
+    if (!email || !password) {
+        alert("Email and password required");
+        return;
+    }
+
     firebase.auth().signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
+        .then(() => {
             alert("Login Successful ✅");
-            window.location.href = "/index.html"; // home page
+            window.location.href = "/index.html";
         })
         .catch((error) => {
             alert(error.message);
         });
 });
 
-// REGISTER
-// REGISTER
+
+// ===========================
+// REGISTER (FIXED VERSION)
+// ===========================
 document.getElementById("registerBtn").addEventListener("click", function (e) {
     e.preventDefault();
 
@@ -49,8 +64,9 @@ document.getElementById("registerBtn").addEventListener("click", function (e) {
     firebase.auth().createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
             const user = userCredential.user;
+            console.log("Auth user created:", user.uid);
 
-            // 🔥 FIRESTORE ME USER SAVE
+            // 🔥 Firestore me user save (RETURN IS IMPORTANT)
             return db.collection("users").doc(user.uid).set({
                 username: username,
                 email: user.email,
@@ -59,10 +75,10 @@ document.getElementById("registerBtn").addEventListener("click", function (e) {
         })
         .then(() => {
             alert("Registration Successful 🎉");
-            container.classList.remove('active'); // login view
+            container.classList.remove("active"); // back to login
         })
         .catch((error) => {
+            console.error("REGISTER ERROR:", error);
             alert(error.message);
         });
 });
-
