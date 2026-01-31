@@ -33,11 +33,12 @@ document.getElementById("loginBtn").addEventListener("click", function (e) {
 });
 
 // REGISTER
-document.getElementById("registerBtn").addEventListener("click", async function () {
+document.getElementById("registerBtn").addEventListener("click", async (e) => {
+  e.preventDefault();
 
-  const username = registerUsername.value.trim();
-  const email = registerEmail.value.trim();
-  const password = registerPassword.value;
+  const username = document.getElementById("registerUsername").value.trim();
+  const email = document.getElementById("registerEmail").value.trim();
+  const password = document.getElementById("registerPassword").value;
 
   if (!username || !email || !password) {
     alert("All fields required");
@@ -45,25 +46,22 @@ document.getElementById("registerBtn").addEventListener("click", async function 
   }
 
   try {
-    // 🔥 AUTH
-    const cred = await firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password);
-
+    const cred = await auth.createUserWithEmailAndPassword(email, password);
     const user = cred.user;
 
-    // 🔥 REALTIME DATABASE SAVE
-    await firebase.database().ref("users/" + user.uid).set({
+    console.log("Auth OK:", user.uid);
+
+    await db.ref("users/" + user.uid).set({
       username: username,
-      email: user.email,
+      email: email,
       createdAt: Date.now()
     });
 
     alert("Registration Successful 🎉");
-    window.location.href = "/Login.html";
+    window.location.href = "/index.html";
 
   } catch (err) {
-    alert(err.message);
     console.error(err);
+    alert(err.message);
   }
 });
