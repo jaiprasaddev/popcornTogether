@@ -44,39 +44,39 @@ document.getElementById("loginBtn").addEventListener("click", function (e) {
 // ===========================
 // REGISTER (FIXED VERSION)
 // ===========================
-document.getElementById("registerBtn").addEventListener("click", async function (e) {
-    e.preventDefault();
+document.getElementById("registerBtn").addEventListener("click", async (e) => {
+  e.preventDefault();
 
-    try {
-        const username = document.getElementById("registerUsername").value.trim();
-        const email = document.getElementById("registerEmail").value.trim();
-        const password = document.getElementById("registerPassword").value;
+  try {
+    const username = registerUsername.value.trim();
+    const email = registerEmail.value.trim();
+    const password = registerPassword.value;
 
-        if (!username || !email || !password) {
-            alert("All fields are required");
-            return;
-        }
-
-        const userCredential = await firebase
-            .auth()
-            .createUserWithEmailAndPassword(email, password);
-
-        const user = userCredential.user;
-        console.log("Auth user created:", user.uid);
-
-        await db.collection("users").doc(user.uid).set({
-            username: username,
-            email: user.email,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        console.log("Firestore write SUCCESS");
-
-        alert("Registration Successful 🎉");
-        container.classList.remove("active");
-
-    } catch (error) {
-        console.error("REGISTER ERROR:", error);
-        alert(error.message);
+    if (!username || !email || !password) {
+      alert("All fields required");
+      return;
     }
+
+    const cred = await firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password);
+
+    const user = cred.user;
+
+    console.log("Auth user created:", user.uid);
+
+    await window.db.collection("users").doc(user.uid).set({
+      username,
+      email,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+
+    alert("Registration Successful 🎉");
+    container.classList.remove("active");
+
+  } catch (err) {
+    alert(err.message);
+    console.error(err);
+  }
 });
+
