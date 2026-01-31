@@ -33,14 +33,31 @@ document.getElementById("loginBtn").addEventListener("click", function (e) {
 });
 
 // REGISTER
+// REGISTER
 document.getElementById("registerBtn").addEventListener("click", function (e) {
     e.preventDefault();
 
-    const email = document.getElementById("registerEmail").value;
+    const username = document.getElementById("registerUsername").value.trim();
+    const email = document.getElementById("registerEmail").value.trim();
     const password = document.getElementById("registerPassword").value;
+
+    if (!username || !email || !password) {
+        alert("All fields are required");
+        return;
+    }
 
     firebase.auth().createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
+            const user = userCredential.user;
+
+            // 🔥 FIRESTORE ME USER SAVE
+            return db.collection("users").doc(user.uid).set({
+                username: username,
+                email: user.email,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        })
+        .then(() => {
             alert("Registration Successful 🎉");
             container.classList.remove('active'); // login view
         })
@@ -48,3 +65,4 @@ document.getElementById("registerBtn").addEventListener("click", function (e) {
             alert(error.message);
         });
 });
+
