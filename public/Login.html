@@ -106,13 +106,15 @@
 
 <script>
   const firebaseConfig = {
-    apiKey: "AIzaSyBMz7pxtjBBwYajEfEhBhF7ADYOgEQX_Po",
-    authDomain: "popcorntogether-fd170.firebaseapp.com",
-    projectId: "popcorntogether-fd170",
-    storageBucket: "popcorntogether-fd170.appspot.com",
-    messagingSenderId: "450280562009",
-    appId: "1:450280562009:web:9774f54f522f6a34378048"
-  };
+  apiKey: "AIzaSyBMz7pxtjBBwYajEfEhBhF7ADYOgEQX_Po",
+  authDomain: "popcorntogether-fd170.firebaseapp.com",
+  databaseURL: "https://popcorntogether-fd170-default-rtdb.firebaseio.com", // 🔥 THIS LINE
+  projectId: "popcorntogether-fd170",
+  storageBucket: "popcorntogether-fd170.appspot.com",
+  messagingSenderId: "450280562009",
+  appId: "1:450280562009:web:9774f54f522f6a34378048"
+};
+
 
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
