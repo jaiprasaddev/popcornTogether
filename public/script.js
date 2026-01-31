@@ -33,18 +33,37 @@ document.getElementById("loginBtn").addEventListener("click", function (e) {
 });
 
 // REGISTER
-document.getElementById("registerBtn").addEventListener("click", function (e) {
-    e.preventDefault();
+document.getElementById("registerBtn").addEventListener("click", async function () {
 
-    const email = document.getElementById("registerEmail").value;
-    const password = document.getElementById("registerPassword").value;
+  const username = registerUsername.value.trim();
+  const email = registerEmail.value.trim();
+  const password = registerPassword.value;
 
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            alert("Registration Successful 🎉");
-            container.classList.remove('active'); // login view
-        })
-        .catch((error) => {
-            alert(error.message);
-        });
+  if (!username || !email || !password) {
+    alert("All fields required");
+    return;
+  }
+
+  try {
+    // 🔥 AUTH
+    const cred = await firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password);
+
+    const user = cred.user;
+
+    // 🔥 REALTIME DATABASE SAVE
+    await firebase.database().ref("users/" + user.uid).set({
+      username: username,
+      email: user.email,
+      createdAt: Date.now()
+    });
+
+    alert("Registration Successful 🎉");
+    window.location.href = "/Login.html";
+
+  } catch (err) {
+    alert(err.message);
+    console.error(err);
+  }
 });
