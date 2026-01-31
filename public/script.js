@@ -14,11 +14,6 @@ loginToggleBtn.addEventListener('click', () => {
 });
 
 
-// ===========================
-// FIREBASE INIT (IMPORTANT)
-// ===========================
-// ⚠️ Ye line firebase.initializeApp(...) ke BAAD honi chahiye
-const db = firebase.firestore();
 
 
 // ===========================
