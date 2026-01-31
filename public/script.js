@@ -62,7 +62,6 @@ document.getElementById("registerBtn").addEventListener("click", async (e) => {
       .createUserWithEmailAndPassword(email, password);
 
     const user = cred.user;
-
     console.log("Auth user created:", user.uid);
 
     await window.db.collection("users").doc(user.uid).set({
