@@ -1,79 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Watch YouTube • PopCornTogether</title>
-  <link rel="stylesheet" href="youtube.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Together</title>
+    <link rel="stylesheet" href="/youtube.css">
 </head>
 <body>
-  <!-- Navbar -->
-  <header>
-    <a class="lg" href="index.html">
-      <span class="pop">PopCorn</span><span class="together">Together</span>
-    </a>
-    <nav>
-      <ul class="nav_links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="movies.html">Movies</a></li>
-        <li><a href="upload.html">Upload and Watch</a></li>
-        <li><a href="youtube.html" class="active">Watch Youtube</a></li>
-        <li><a href="services.html">Services</a></li>
-      </ul>
-    </nav>
-    <a class="cta" href="login.html"><button>Login</button></a>
-  </header>
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="screen active">
+        <div class="welcome-container">
+            <h1>🎬 YouTube Together</h1>
+            <p>Watch YouTube videos with your friends in real-time!</p>
+            
+            <div class="welcome-options">
+                <div class="option-card">
+                    <h2>Create Room</h2>
+                    <input type="text" id="create-username" placeholder="Enter your name" maxlength="20">
+                    <button id="create-room-btn" class="btn btn-primary">Create Room</button>
+                </div>
 
-  <!-- Main Section -->
-  <section class="youtube-section">
-    <div class="container">
-      <!-- Input card -->
-      <div class="input-card">
-        <h1>Watch YouTube</h1>
-        <p>Paste a YouTube link to play the video below</p>
-        <div class="input-group">
-          <input type="text" id="youtubeLink" placeholder="Paste YouTube link here...">
-          <button id="playBtn">▶ Play</button>
+                <div class="divider">OR</div>
+
+                <div class="option-card">
+                    <h2>Join Room</h2>
+                    <input type="text" id="join-username" placeholder="Enter your name" maxlength="20">
+                    <input type="text" id="room-id-input" placeholder="Enter Room ID" maxlength="6">
+                    <button id="join-room-btn" class="btn btn-secondary">Join Room</button>
+                </div>
+            </div>
+
+            <div id="error-message" class="error-message"></div>
         </div>
-      </div>
-
-      <!-- Player -->
-      <div class="player-card">
-        <iframe id="youtubePlayer" src="" frameborder="0" allowfullscreen></iframe>
-      </div>
     </div>
-  </section>
 
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <!-- Room Screen -->
+    <div id="room-screen" class="screen">
+        <div class="room-header">
+            <div class="room-info">
+                <div class="room-id-container">
+                    <h2>Room ID: <span id="room-id-display"></span></h2>
+                    <button id="copy-room-id-btn" class="btn-copy" title="Copy Room ID">
+                        📋 Copy
+                    </button>
+                </div>
+                <p>Welcome, <span id="username-display"></span>!</p>
+                <p id="master-status" class="master-status"></p>
+            </div>
+            <button id="leave-room-btn" class="btn btn-danger">Leave Room</button>
+        </div>
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyBMz7pxtjBBwYajEfEhBhF7ADYOgEQX_Po",
-    authDomain: "popcorntogether-fd170.firebaseapp.com",
-    projectId: "popcorntogether-fd170",
-    storageBucket: "popcorntogether-fd170.appspot.com",
-    messagingSenderId: "450280562009",
-    appId: "1:450280562009:web:9774f54f522f6a34378048"
-  };
+        <div class="main-content">
+            <!-- Video Section -->
+            <div class="video-section">
+                <div class="video-input">
+                    <input type="text" id="video-url-input" placeholder="Paste YouTube URL here">
+                    <button id="load-video-btn" class="btn btn-primary">Load Video</button>
+                </div>
 
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
+                <div id="video-container">
+                    <div id="player-placeholder">
+                        <div class="placeholder-content">
+                            <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M23 7l-7 5 7 5V7z"></path>
+                                <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                            </svg>
+                            <p>Paste a YouTube URL above to start watching</p>
+                        </div>
+                    </div>
+                    <div id="player"></div>
+                </div>
 
-  firebase.auth().onAuthStateChanged((user) => {
-    if (!user) {
-      // ❌ not logged in → redirect (NO BACK POSSIBLE)
-      window.location.replace("/Login.html");
-    } else {
-      // ✅ logged in → show page
-      document.body.style.display = "block";
-    }
-  });
-</script>
+                <!-- Users in Room -->
+                <div class="users-panel">
+                    <h3>Users in Room (<span id="user-count">0</span>)</h3>
+                    <div id="users-list"></div>
+                </div>
+            </div>
 
+            <!-- Chat Section -->
+            <div class="chat-section">
+                <div class="chat-header">
+                    <h3>Live Chat</h3>
+                </div>
+                <div id="chat-messages" class="chat-messages"></div>
+                <div class="chat-input">
+                    <input type="text" id="chat-input" placeholder="Type a message..." maxlength="200">
+                    <button id="send-chat-btn" class="btn btn-primary">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Copy Success Toast -->
+    <div id="copy-toast" class="copy-toast">
+        ✅ Room ID copied to clipboard!
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/app.js"></script>
 </body>
-<script src="youtube.js"></script>
-
 </html>
