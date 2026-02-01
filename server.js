@@ -45,11 +45,6 @@ app.use(express.urlencoded({ limit: '5gb', extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Explicitly serve index.html for root route
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
 // Store room data
 const rooms = new Map();
 
@@ -75,29 +70,42 @@ function getLocalIP() {
 io.on('connection', (socket) => {
     console.log('✅ User connected:', socket.id, '| IP:', socket.handshake.address);
 
-    // Create room
+    // ========== CREATE ROOM (YouTube style) ==========
     socket.on('create-room', (username) => {
         const roomId = generateRoomId();
         rooms.set(roomId, {
             masterId: socket.id,
             masterUsername: username,
-            users: [{ id: socket.id, username: username, isMaster: true }],
+            host: socket.id, // For room.html compatibility
+            hostUsername: username,
+            users: [{ id: socket.id, username: username, isMaster: true, isHost: true }],
             videoUrl: '',
             videoType: null, // 'youtube' or 'upload'
             currentTime: 0,
-            isPlaying: false
+            isPlaying: false,
+            videoState: { isPlaying: false, currentTime: 0 } // For room.html compatibility
         });
         socket.join(roomId);
         socket.roomId = roomId;
         socket.username = username;
-        socket.emit('room-created', { roomId, username, isMaster: true });
+        socket.isHost = true;
+        
+        // Send response compatible with BOTH frontends
+        socket.emit('room-created', { 
+            roomId, 
+            username,
+            isMaster: true,
+            isHost: true 
+        });
+        
         console.log(`🚀 Room ${roomId} created by ${username} (Master)`);
     });
 
-    // Join room
+    // ========== JOIN ROOM (Compatible with both styles) ==========
     socket.on('join-room', (data) => {
         const { roomId, username } = data;
         const room = rooms.get(roomId);
+        
         if (!room) {
             console.log(`❌ Room ${roomId} not found for ${username}`);
             socket.emit('room-error', 'Room not found');
@@ -105,12 +113,16 @@ io.on('connection', (socket) => {
             return;
         }
         
-        const isMaster = (socket.id === room.masterId);
-        room.users.push({ id: socket.id, username: username, isMaster: isMaster });
+        const isMaster = false; // Only creator is master
+        const isHost = false;
+        
+        room.users.push({ id: socket.id, username: username, isMaster: isMaster, isHost: isHost });
         socket.join(roomId);
         socket.roomId = roomId;
         socket.username = username;
+        socket.isHost = isHost;
         
+        // Send response compatible with BOTH frontends
         socket.emit('room-joined', {
             roomId,
             username,
@@ -119,8 +131,10 @@ io.on('connection', (socket) => {
             currentTime: room.currentTime,
             isPlaying: room.isPlaying,
             isMaster: isMaster,
+            isHost: isHost,
             masterId: room.masterId,
-            masterUsername: room.masterUsername
+            hostId: room.host,
+            hostUsername: room.hostUsername
         });
         
         console.log(`🚪 ${username} joined room ${roomId} (${isMaster ? 'Master' : 'Viewer'})`);
@@ -128,13 +142,14 @@ io.on('connection', (socket) => {
         // Notify all users in room
         io.to(roomId).emit('user-list-update', {
             users: room.users,
-            masterId: room.masterId
+            masterId: room.masterId,
+            hostId: room.host
         });
         
         io.to(roomId).emit('user-joined', { 
             username, 
             users: room.users,
-            hostId: room.masterId
+            hostId: room.host
         });
         
         io.to(roomId).emit('chat-message', {
@@ -151,56 +166,74 @@ io.on('connection', (socket) => {
             });
             socket.emit('sync-video', { 
                 action: room.isPlaying ? 'play' : 'pause', 
-                currentTime: room.currentTime 
+                currentTime: room.currentTime,
+                isPlaying: room.isPlaying
             });
         }
     });
 
-    // YouTube video change
+    // ========== YOUTUBE VIDEO CHANGE ==========
     socket.on('video-change', (videoUrl) => {
         const roomId = socket.roomId;
         const room = rooms.get(roomId);
-        if (room && socket.id === room.masterId) {
-            room.videoUrl = videoUrl;
-            room.videoType = 'youtube';
-            room.currentTime = 0;
-            room.isPlaying = false;
-            io.to(roomId).emit('video-changed', {
-                videoUrl: videoUrl,
-                videoType: 'youtube',
-                username: socket.username
-            });
-            io.to(roomId).emit('load-video', { 
-                videoUrl: videoUrl, 
-                videoType: 'youtube' 
-            });
-            console.log(`🎥 YouTube video changed in room ${roomId} by ${socket.username}`);
-        } else if (room && socket.id !== room.masterId) {
+        
+        if (!room) return;
+        
+        // Only master/host can change video
+        if (socket.id !== room.masterId && socket.id !== room.host) {
             socket.emit('control-denied', { message: 'Only the master can change the video' });
             console.log(`⚠️ Non-master ${socket.username} tried to change video in room ${roomId}`);
+            return;
         }
+        
+        room.videoUrl = videoUrl;
+        room.videoType = 'youtube';
+        room.currentTime = 0;
+        room.isPlaying = false;
+        room.videoState = { isPlaying: false, currentTime: 0 };
+        
+        io.to(roomId).emit('video-changed', {
+            videoUrl: videoUrl,
+            videoType: 'youtube',
+            username: socket.username
+        });
+        
+        io.to(roomId).emit('load-video', { 
+            videoUrl: videoUrl, 
+            videoType: 'youtube' 
+        });
+        
+        console.log(`🎥 YouTube video changed in room ${roomId} by ${socket.username}`);
     });
 
-    // File uploaded
+    // ========== FILE UPLOADED ==========
     socket.on('video-uploaded', ({ roomId, username, videoUrl }) => {
         const room = rooms.get(roomId);
-        if (room && socket.id === room.masterId) {
-            room.videoUrl = videoUrl;
-            room.videoType = 'upload';
-            room.currentTime = 0;
-            room.isPlaying = false;
-            socket.to(roomId).emit('video-uploaded', { username, videoUrl });
-            io.to(roomId).emit('load-video', { 
-                videoUrl: videoUrl, 
-                videoType: 'upload' 
-            });
-            console.log(`📤 File uploaded in room ${roomId} by ${username}`);
-        } else if (room && socket.id !== room.masterId) {
+        
+        if (!room) return;
+        
+        // Only master/host can upload
+        if (socket.id !== room.masterId && socket.id !== room.host) {
             socket.emit('control-denied', { message: 'Only the master can upload files' });
+            return;
         }
+        
+        room.videoUrl = videoUrl;
+        room.videoType = 'upload';
+        room.currentTime = 0;
+        room.isPlaying = false;
+        room.videoState = { isPlaying: false, currentTime: 0 };
+        
+        socket.to(roomId).emit('video-uploaded', { username, videoUrl });
+        io.to(roomId).emit('load-video', { 
+            videoUrl: videoUrl, 
+            videoType: 'upload' 
+        });
+        
+        console.log(`📤 File uploaded in room ${roomId} by ${username}`);
     });
 
-    // Upload progress - broadcast to other users in room
+    // ========== UPLOAD PROGRESS ==========
     socket.on('upload-progress', ({ roomId, username, progress, speed, eta, filename }) => {
         const room = rooms.get(roomId);
         if (room) {
@@ -212,95 +245,127 @@ io.on('connection', (socket) => {
                 filename 
             });
             
-            if (progress % 10 === 0) { // Log every 10%
+            if (progress % 10 === 0) {
                 console.log(`📊 [${roomId}] ${username} upload: ${progress}% (${speed})`);
             }
         }
     });
 
-    // Play (Master only)
+    // ========== PLAY (YouTube style - sends to others) ==========
     socket.on('play', (currentTime) => {
         const roomId = socket.roomId;
         const room = rooms.get(roomId);
-        if (room && socket.id === room.masterId) {
-            room.isPlaying = true;
-            room.currentTime = currentTime;
-            console.log(`▶️ Master played video at ${currentTime} in room ${roomId}`);
-            socket.to(roomId).emit('play', currentTime);
-            socket.to(roomId).emit('sync-video', { action: 'play', currentTime });
-        } else if (room && socket.id !== room.masterId) {
+        
+        if (!room) return;
+        
+        // Only master/host can control
+        if (socket.id !== room.masterId && socket.id !== room.host) {
             socket.emit('control-denied', { message: 'Only the master can control playback' });
             console.log(`⚠️ Non-master ${socket.username} tried to play in room ${roomId}`);
+            return;
         }
+        
+        room.isPlaying = true;
+        room.currentTime = currentTime;
+        room.videoState = { isPlaying: true, currentTime };
+        
+        console.log(`▶️ Master played video at ${currentTime} in room ${roomId}`);
+        socket.to(roomId).emit('play', currentTime);
+        socket.to(roomId).emit('sync-video', { action: 'play', currentTime });
     });
 
-    // Pause (Master only)
+    // ========== PAUSE (YouTube style - sends to others) ==========
     socket.on('pause', (currentTime) => {
         const roomId = socket.roomId;
         const room = rooms.get(roomId);
-        if (room && socket.id === room.masterId) {
-            room.isPlaying = false;
-            room.currentTime = currentTime;
-            console.log(`⏸️ Master paused video at ${currentTime} in room ${roomId}`);
-            socket.to(roomId).emit('pause', currentTime);
-            socket.to(roomId).emit('sync-video', { action: 'pause', currentTime });
-        } else if (room && socket.id !== room.masterId) {
+        
+        if (!room) return;
+        
+        // Only master/host can control
+        if (socket.id !== room.masterId && socket.id !== room.host) {
             socket.emit('control-denied', { message: 'Only the master can control playback' });
             console.log(`⚠️ Non-master ${socket.username} tried to pause in room ${roomId}`);
+            return;
         }
+        
+        room.isPlaying = false;
+        room.currentTime = currentTime;
+        room.videoState = { isPlaying: false, currentTime };
+        
+        console.log(`⏸️ Master paused video at ${currentTime} in room ${roomId}`);
+        socket.to(roomId).emit('pause', currentTime);
+        socket.to(roomId).emit('sync-video', { action: 'pause', currentTime });
     });
 
-    // Seek (Master only)
+    // ========== SEEK (YouTube style - sends to others) ==========
     socket.on('seek', (currentTime) => {
         const roomId = socket.roomId;
         const room = rooms.get(roomId);
-        if (room && socket.id === room.masterId) {
-            room.currentTime = currentTime;
-            console.log(`⏩ Master seeked to ${currentTime} in room ${roomId}`);
-            socket.to(roomId).emit('seek', currentTime);
-            socket.to(roomId).emit('sync-video', { action: 'seek', currentTime });
-        } else if (room && socket.id !== room.masterId) {
+        
+        if (!room) return;
+        
+        // Only master/host can control
+        if (socket.id !== room.masterId && socket.id !== room.host) {
             socket.emit('control-denied', { message: 'Only the master can control playback' });
             console.log(`⚠️ Non-master ${socket.username} tried to seek in room ${roomId}`);
+            return;
         }
+        
+        room.currentTime = currentTime;
+        room.videoState.currentTime = currentTime;
+        
+        console.log(`⏩ Master seeked to ${currentTime} in room ${roomId}`);
+        socket.to(roomId).emit('seek', currentTime);
+        socket.to(roomId).emit('sync-video', { 
+            action: room.isPlaying ? 'play' : 'pause', 
+            currentTime 
+        });
     });
 
-    // Video control (unified control for both types)
+    // ========== VIDEO CONTROL (room.html style - unified control) ==========
     socket.on('video-control', ({ roomId, action, currentTime }) => {
         const room = rooms.get(roomId);
-        if (room && socket.id === room.masterId) {
-            room.isPlaying = (action === 'play');
-            room.currentTime = currentTime;
-            
-            socket.to(roomId).emit('sync-video', { action, currentTime });
-            console.log(`🎮 ${socket.username} (Master) ${action}ed video at ${currentTime}s in room ${roomId}`);
-        } else if (room && socket.id !== room.masterId) {
+        
+        if (!room) return;
+        
+        // Only master/host can control
+        if (socket.id !== room.masterId && socket.id !== room.host) {
             socket.emit('control-denied', { message: 'Only the master can control the video' });
             console.log(`⛔ ${socket.username} tried to control video but is not master`);
+            return;
         }
+        
+        room.isPlaying = (action === 'play');
+        room.currentTime = currentTime;
+        room.videoState = { isPlaying: room.isPlaying, currentTime };
+        
+        socket.to(roomId).emit('sync-video', { action, currentTime });
+        console.log(`🎮 ${socket.username} (Master) ${action}ed video at ${currentTime}s in room ${roomId}`);
     });
 
-    // Chat message
+    // ========== CHAT MESSAGE ==========
     socket.on('chat-message', (message) => {
         const roomId = socket.roomId;
         if (roomId) {
             const chatData = {
                 username: socket.username,
-                message: message,
+                message: typeof message === 'string' ? message : message.message || message,
                 timestamp: new Date().toLocaleTimeString()
             };
+            
             io.to(roomId).emit('chat-message', chatData);
             io.to(roomId).emit('new-message', chatData);
-            console.log(`💬 [${roomId}] ${socket.username}: ${message}`);
+            console.log(`💬 [${roomId}] ${socket.username}: ${chatData.message}`);
         }
     });
 
-    // Disconnect
+    // ========== DISCONNECT ==========
     socket.on('disconnect', () => {
         const roomId = socket.roomId;
         const room = rooms.get(roomId);
+        
         if (room) {
-            const wasMaster = (socket.id === room.masterId);
+            const wasMaster = (socket.id === room.masterId || socket.id === room.host);
             
             room.users = room.users.filter(user => user.id !== socket.id);
             
@@ -315,7 +380,10 @@ io.on('connection', (socket) => {
                     const newMaster = room.users[0];
                     room.masterId = newMaster.id;
                     room.masterUsername = newMaster.username;
+                    room.host = newMaster.id;
+                    room.hostUsername = newMaster.username;
                     newMaster.isMaster = true;
+                    newMaster.isHost = true;
                     
                     io.to(roomId).emit('master-changed', {
                         masterId: newMaster.id,
@@ -333,7 +401,8 @@ io.on('connection', (socket) => {
                 
                 io.to(roomId).emit('user-list-update', {
                     users: room.users,
-                    masterId: room.masterId
+                    masterId: room.masterId,
+                    hostId: room.host
                 });
                 
                 io.to(roomId).emit('user-left', { 
@@ -348,11 +417,12 @@ io.on('connection', (socket) => {
                 });
             }
         }
+        
         console.log('❌ User disconnected:', socket.id);
     });
 });
 
-// File upload endpoint with comprehensive error handling
+// ========== FILE UPLOAD ENDPOINT ==========
 app.post('/upload', (req, res) => {
     upload.single('video')(req, res, (err) => {
         if (err instanceof multer.MulterError) {
@@ -411,11 +481,9 @@ app.post('/upload', (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error('❌ Server error:', err.message);
-    
     if (res.headersSent) {
         return next(err);
     }
-    
     res.status(500).json({ 
         success: false,
         error: err.message || 'Something went wrong!' 
@@ -437,7 +505,7 @@ const localIP = getLocalIP();
 server.listen(PORT, '0.0.0.0', () => {
     console.log('');
     console.log('╔═══════════════════════════════════════════════════╗');
-    console.log('║   🎬 Watch Together Server (YouTube + Upload)    ║');
+    console.log('║   🎬 Watch Together Server (Multi-Frontend)      ║');
     console.log('╚═══════════════════════════════════════════════════╝');
     console.log('');
     console.log('📍 Access from this device:');
@@ -446,13 +514,10 @@ server.listen(PORT, '0.0.0.0', () => {
     console.log('📱 Access from other devices on same network:');
     console.log(`   http://${localIP}:${PORT}`);
     console.log('');
-    console.log('✨ Features:');
-    console.log('   ✅ YouTube URL syncing');
-    console.log('   ✅ Local file upload & sync (up to 5GB)');
-    console.log('   ✅ Master control (only host can control playback)');
-    console.log('   ✅ Real-time chat');
-    console.log('   ✅ Upload progress tracking');
-    console.log('   ✅ All file types accepted');
+    console.log('✨ Supported Frontends:');
+    console.log('   ✅ youtube.html - YouTube URL syncing');
+    console.log('   ✅ room.html - File upload & syncing');
+    console.log('   ✅ Both work with the same server!');
     console.log('');
     console.log('💡 Make sure all devices are on the same WiFi network!');
     console.log('');
