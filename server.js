@@ -74,10 +74,35 @@ function getLocalIP() {
 // Socket.IO connection handling
 io.on('connection', (socket) => {
     console.log('✅ User connected:', socket.id, '| IP:', socket.handshake.address);
+    console.log(`   📊 Current active rooms: ${rooms.size}`);
+    if (rooms.size > 0) {
+        console.log(`   🚪 Room IDs: ${Array.from(rooms.keys()).join(', ')}`);
+    }
 
     // Create room (works for both YouTube and Upload modes)
-    socket.on('create-room', (username) => {
-        const roomId = generateRoomId();
+    socket.on('create-room', (data) => {
+        // Handle both formats: string username (YouTube) or object {roomId, username} (Upload)
+        let roomId, username;
+        
+        if (typeof data === 'string') {
+            // YouTube format: just username string
+            username = data;
+            roomId = generateRoomId();
+        } else if (typeof data === 'object' && data.username) {
+            // Upload format: object with roomId and username
+            username = data.username;
+            roomId = data.roomId || generateRoomId();
+        } else {
+            console.error('❌ Invalid create-room data format:', data);
+            socket.emit('room-error', 'Invalid room creation data');
+            return;
+        }
+        
+        // Check if room already exists (shouldn't happen, but be safe)
+        if (rooms.has(roomId)) {
+            console.log(`⚠️ Room ${roomId} already exists, generating new ID`);
+            roomId = generateRoomId();
+        }
         
         rooms.set(roomId, {
             masterId: socket.id,
@@ -94,7 +119,21 @@ io.on('connection', (socket) => {
         socket.username = username;
         
         console.log(`🚀 Room ${roomId} created by ${username} (Master)`);
-        socket.emit('room-created', { roomId, username });
+        
+        // Emit room-created event with all necessary data for both modes
+        socket.emit('room-created', { 
+            roomId, 
+            username,
+            isHost: true,
+            isMaster: true,
+            masterId: socket.id
+        });
+        
+        // Update user list immediately
+        io.to(roomId).emit('user-list-update', {
+            users: rooms.get(roomId).users,
+            masterId: socket.id
+        });
     });
 
     // Join room (works for both YouTube and Upload modes)
@@ -109,15 +148,23 @@ io.on('connection', (socket) => {
             return;
         }
         
-        // Add user to room
-        room.users.push({ id: socket.id, username: username });
+        // Check if user is already in the room (reconnection case)
+        const existingUser = room.users.find(u => u.id === socket.id);
+        if (!existingUser) {
+            // Add new user to room
+            room.users.push({ id: socket.id, username: username });
+            console.log(`🚪 ${username} joined room ${roomId} (NEW USER)`);
+        } else {
+            console.log(`🔄 ${username} reconnected to room ${roomId}`);
+        }
+        
         socket.join(roomId);
         socket.roomId = roomId;
         socket.username = username;
         
         const isMaster = (socket.id === room.masterId);
         
-        // Send room-joined event (for YouTube mode)
+        // Send room-joined event (for both YouTube and Upload modes)
         socket.emit('room-joined', {
             roomId,
             username,
@@ -130,7 +177,9 @@ io.on('connection', (socket) => {
             hostUsername: room.masterUsername
         });
         
-        console.log(`🚪 ${username} joined room ${roomId} (${isMaster ? 'Master' : 'Viewer'})`);
+        console.log(`✅ ${username} in room ${roomId} (${isMaster ? 'Master/Host' : 'Viewer'})`);
+        console.log(`   📊 Total users in room: ${room.users.length}`);
+        console.log(`   👥 Users: ${room.users.map(u => u.username).join(', ')}`);
         
         // Notify all users in room about user list update
         io.to(roomId).emit('user-list-update', {
