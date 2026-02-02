@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PopCornTogether</title>
-    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="style.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
@@ -15,6 +15,60 @@
   </head>
   <body>
    
+    <header>
+      <!-- Logo -->
+      <a class="lg" href="/public/index.html">
+        <span class="pop">PopCorn</span><span class="together">Together</span>
+      </a>
+      
+      <!-- Mobile Menu Toggle (Hamburger) -->
+      <div class="mobile-menu-toggle" id="mobileMenuToggle" onclick="toggleMobileMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      
+      <!-- Navigation Menu -->
+      <nav id="nav">
+        <ul class="nav_links">
+          <li><a href="/index.html" class="active">Home</a></li>
+          <li><a href="/movies.html">Movies</a></li>
+          <li><a href="/room.html">Upload and Watch</a></li>
+          <li><a href="/youtube.html">Watch Youtube</a></li>
+          <li><a href="/services.html">Services</a></li>
+          
+          <!-- Mobile-only auth section inside hamburger menu -->
+          <li class="mobile-auth-section">
+            <!-- Logged-out state (shows only login button) -->
+            <div id="mobileLoginSection" class="mobile-login-wrapper">
+              <a href="/Login.html" class="mobile-login-btn">
+                <button>Login</button>
+              </a>
+            </div>
+            
+            <!-- Logged-in state (shows username and logout) -->
+            <div id="mobileUserSection" class="mobile-user-wrapper" style="display:none;">
+              <div class="mobile-username" id="mobileUsername"></div>
+              <button id="mobileLogoutBtn" class="mobile-logout-btn">Logout</button>
+            </div>
+          </li>
+        </ul>
+      </nav>
+      
+      <!-- Desktop auth area (visible only on desktop) -->
+      <div class="auth-area desktop-auth">
+        <!-- Logged-in user display -->
+        <div id="desktopUserBox" class="desktop-user-box" style="display:none;">
+          <span id="desktopUsername"></span>
+          <button id="desktopLogoutBtn">Logout</button>
+        </div>
+
+        <!-- Login button (shown when logged out) -->
+        <a class="cta" id="desktopLoginBtn" href="/Login.html" style="display:inline-block;">
+          <button>Login</button>
+        </a>
+      </div>
+    </header>
 
     <section class="hero">
       <div class="hero-Video">
@@ -167,9 +221,7 @@
 
 
     <!-- Main JavaScript -->
-    <script src="/js/navbar-loader.js"></script>
-<script src="/index.js"></script>
-
+    <script src="index.js"></script>
 
   </body>
 </html>

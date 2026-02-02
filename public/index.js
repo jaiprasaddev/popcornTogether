@@ -13,135 +13,179 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-/* =====================================================
-   🔥 NAVBAR INITIALIZER (IMPORTANT)
-===================================================== */
-function initNavbar() {
-  // Navigation elements
-  const nav = document.getElementById("nav");
-  const mobileMenuToggle = document.getElementById("mobileMenuToggle");
+// ========== DOM ELEMENTS ==========
+// Desktop elements
+const desktopLoginBtn = document.getElementById("desktopLoginBtn");
+const desktopUserBox = document.getElementById("desktopUserBox");
+const desktopUsername = document.getElementById("desktopUsername");
+const desktopLogoutBtn = document.getElementById("desktopLogoutBtn");
 
-  if (!nav || !mobileMenuToggle) {
-    console.warn("Navbar elements not found");
-    return;
-  }
+// Mobile elements
+const mobileLoginSection = document.getElementById("mobileLoginSection");
+const mobileUserSection = document.getElementById("mobileUserSection");
+const mobileUsername = document.getElementById("mobileUsername");
+const mobileLogoutBtn = document.getElementById("mobileLogoutBtn");
 
-  // Make toggle function global (HTML onclick uses it)
-  window.toggleMobileMenu = function () {
-    nav.classList.toggle("active");
-    mobileMenuToggle.classList.toggle("active");
-  };
+// Navigation elements
+const nav = document.getElementById("nav");
+const mobileMenuToggle = document.getElementById("mobileMenuToggle");
 
-  // Close menu when clicking nav links
-  document.querySelectorAll(".nav_links a").forEach(link => {
-    link.addEventListener("click", () => {
-      if (window.innerWidth <= 768) {
-        nav.classList.remove("active");
-        mobileMenuToggle.classList.remove("active");
-      }
-    });
-  });
-
-  // Close when clicking outside
-  document.addEventListener("click", (e) => {
-    if (
-      nav.classList.contains("active") &&
-      !nav.contains(e.target) &&
-      !mobileMenuToggle.contains(e.target)
-    ) {
-      nav.classList.remove("active");
-      mobileMenuToggle.classList.remove("active");
-    }
-  });
-
-  // Close menu on resize
-  window.addEventListener("resize", () => {
-    if (window.innerWidth > 768) {
-      nav.classList.remove("active");
-      mobileMenuToggle.classList.remove("active");
-    }
-  });
-
-  // Prevent body scroll when menu open
-  const observer = new MutationObserver(() => {
-    document.body.style.overflow = nav.classList.contains("active")
-      ? "hidden"
-      : "auto";
-  });
-
-  observer.observe(nav, { attributes: true, attributeFilter: ["class"] });
-
-  // Active page highlight
-  const currentPage = window.location.pathname;
-  document.querySelectorAll(".nav_links a").forEach(link => {
-    if (link.getAttribute("href") === currentPage) {
-      link.classList.add("active");
-    }
-  });
-
-  /* ===== AUTH UI ===== */
-  const desktopLoginBtn = document.getElementById("desktopLoginBtn");
-  const desktopUserBox = document.getElementById("desktopUserBox");
-  const desktopUsername = document.getElementById("desktopUsername");
-  const desktopLogoutBtn = document.getElementById("desktopLogoutBtn");
-
-  const mobileLoginSection = document.getElementById("mobileLoginSection");
-  const mobileUserSection = document.getElementById("mobileUserSection");
-  const mobileUsername = document.getElementById("mobileUsername");
-  const mobileLogoutBtn = document.getElementById("mobileLogoutBtn");
-
-  function updateAuthUI(user) {
-    if (!desktopLoginBtn) return;
-
-    if (user) {
-      const username = user.email.split("@")[0];
-
-      desktopLoginBtn.style.display = "none";
-      desktopUserBox.style.display = "flex";
-      desktopUsername.innerText = `👤 ${username}`;
-
-      mobileLoginSection.style.display = "none";
-      mobileUserSection.style.display = "flex";
-      mobileUsername.innerText = `👤 ${username}`;
-    } else {
-      desktopLoginBtn.style.display = "inline-block";
-      desktopUserBox.style.display = "none";
-
-      mobileLoginSection.style.display = "block";
-      mobileUserSection.style.display = "none";
-    }
-  }
-
-  firebase.auth().onAuthStateChanged(updateAuthUI);
-
-  if (desktopLogoutBtn) {
-    desktopLogoutBtn.addEventListener("click", () => {
-      firebase.auth().signOut().then(() => {
-        window.location.href = "/index.html";
-      });
-    });
-  }
-
-  if (mobileLogoutBtn) {
-    mobileLogoutBtn.addEventListener("click", () => {
-      firebase.auth().signOut().then(() => {
-        nav.classList.remove("active");
-        mobileMenuToggle.classList.remove("active");
-        window.location.href = "/index.html";
-      });
-    });
-  }
+// ========== MOBILE MENU TOGGLE FUNCTION ==========
+/**
+ * Toggles the mobile hamburger menu open/closed
+ * Adds/removes 'active' class to both nav and hamburger icon
+ */
+function toggleMobileMenu() {
+  nav.classList.toggle("active");
+  mobileMenuToggle.classList.toggle("active");
 }
 
-/* =====================================================
-   GET STARTED BUTTON (INDEX PAGE ONLY)
-===================================================== */
+// ========== CLOSE MENU WHEN CLICKING NAV LINKS ==========
+/**
+ * Close mobile menu when user clicks on any navigation link
+ * This provides better UX on mobile devices
+ */
+const navLinks = document.querySelectorAll(".nav_links li a");
+navLinks.forEach(link => {
+  link.addEventListener("click", () => {
+    // Only close menu on mobile (when hamburger is visible)
+    if (window.innerWidth <= 768) {
+      nav.classList.remove("active");
+      mobileMenuToggle.classList.remove("active");
+    }
+  });
+});
+
+
+// get started login
 const getStartedBtn = document.getElementById("getStartedBtn");
 
 if (getStartedBtn) {
   getStartedBtn.addEventListener("click", (e) => {
     e.preventDefault();
+
     const user = firebase.auth().currentUser;
-    window.location.href = user ? "/room.html" : "/Login.html";
+
+    if (user) {
+      // ✅ logged in → go to room
+      window.location.href = "/room.html";
+    } else {
+      // ❌ not logged in → go to login
+      window.location.href = "/Login.html";
+    }
   });
 }
+
+
+// ========== CLOSE MENU WHEN CLICKING OUTSIDE ==========
+/**
+ * Close mobile menu when user clicks outside of it
+ * This provides better UX on mobile devices
+ */
+document.addEventListener("click", (event) => {
+  const isClickInsideNav = nav.contains(event.target);
+  const isClickOnToggle = mobileMenuToggle.contains(event.target);
+  
+  // If menu is open and click is outside nav and toggle button
+  if (nav.classList.contains("active") && !isClickInsideNav && !isClickOnToggle) {
+    nav.classList.remove("active");
+    mobileMenuToggle.classList.remove("active");
+  }
+});
+
+// ========== UPDATE UI BASED ON AUTH STATE ==========
+/**
+ * Updates both desktop and mobile UI elements based on user login state
+ * @param {Object|null} user - Firebase user object or null if logged out
+ */
+function updateAuthUI(user) {
+  if (user) {
+    // User is logged in
+    const username = user.email.split("@")[0]; // Extract username from email
+    
+    // ========== DESKTOP UI (Logged In) ==========
+    desktopLoginBtn.style.display = "none";
+    desktopUserBox.style.display = "flex";
+    desktopUsername.innerText = `👤 ${username}`;
+    
+    // ========== MOBILE UI (Logged In) ==========
+    mobileLoginSection.style.display = "none";
+    mobileUserSection.style.display = "flex";
+    mobileUsername.innerText = `👤 ${username}`;
+    
+  } else {
+    // User is logged out
+    
+    // ========== DESKTOP UI (Logged Out) ==========
+    desktopLoginBtn.style.display = "inline-block";
+    desktopUserBox.style.display = "none";
+    
+    // ========== MOBILE UI (Logged Out) ==========
+    mobileLoginSection.style.display = "block";
+    mobileUserSection.style.display = "none";
+  }
+}
+
+// ========== FIREBASE AUTH STATE LISTENER ==========
+/**
+ * Listen for authentication state changes
+ * This runs automatically when user logs in/out
+ */
+firebase.auth().onAuthStateChanged((user) => {
+  updateAuthUI(user);
+});
+
+// ========== LOGOUT HANDLERS ==========
+/**
+ * Desktop logout button click handler
+ */
+desktopLogoutBtn.addEventListener("click", () => {
+  firebase.auth().signOut().then(() => {
+    window.location.href = "/index.html";
+  }).catch((error) => {
+    console.error("Logout error:", error);
+  });
+});
+
+/**
+ * Mobile logout button click handler
+ * Also closes the mobile menu after logout
+ */
+mobileLogoutBtn.addEventListener("click", () => {
+  firebase.auth().signOut().then(() => {
+    // Close mobile menu
+    nav.classList.remove("active");
+    mobileMenuToggle.classList.remove("active");
+    
+    // Redirect to home
+    window.location.href = "/index.html";
+  }).catch((error) => {
+    console.error("Logout error:", error);
+  });
+});
+
+// ========== WINDOW RESIZE HANDLER ==========
+/**
+ * Close mobile menu when resizing to desktop view
+ * Prevents menu from staying open when switching to desktop
+ */
+window.addEventListener("resize", () => {
+  if (window.innerWidth > 768) {
+    nav.classList.remove("active");
+    mobileMenuToggle.classList.remove("active");
+  }
+});
+
+// ========== PREVENT BODY SCROLL WHEN MENU IS OPEN ==========
+const observer = new MutationObserver(() => {
+  if (nav.classList.contains("active")) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "auto";
+  }
+});
+
+observer.observe(nav, {
+  attributes: true,
+  attributeFilter: ["class"]
+});
