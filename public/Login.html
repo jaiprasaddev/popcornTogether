@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login/Signup</title>
+    <title>Login / Signup</title>
+
     <link rel="stylesheet" href="/style-Login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </head>
@@ -17,13 +18,11 @@
             <h1>Login</h1>
 
             <div class="input-box">
-                <!-- 🔥 ID added -->
                 <input type="email" id="loginEmail" placeholder="Email" required>
                 <i class="fa-solid fa-user"></i>
             </div>
 
             <div class="input-box">
-                <!-- 🔥 ID added -->
                 <input type="password" id="loginPassword" placeholder="Password" required>
                 <i class="fa-solid fa-lock"></i>
             </div>
@@ -32,15 +31,15 @@
                 <a href="#">Forgot Password?</a>
             </div>
 
-            <!-- 🔥 ID added -->
             <button type="submit" class="btn" id="loginBtn">Login</button>
 
-            <p>Or login with social platforms</p>
+            <p>Or login with</p>
+
+            <!-- ✅ ONLY GOOGLE -->
             <div class="social-icons">
-                <a href="#"><i class="fa-brands fa-google"></i></a>
-                <a href="#"><i class="fa-brands fa-facebook"></i></a>
-                <a href="#"><i class="fa-brands fa-github"></i></a>
-                <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="#" id="googleLoginBtn">
+                    <i class="fa-brands fa-google"></i>
+                </a>
             </div>
         </form>
     </div>
@@ -51,37 +50,34 @@
             <h1>Registration</h1>
 
             <div class="input-box">
-                <!-- (optional – future use) -->
                 <input type="text" id="registerUsername" placeholder="Username" required>
                 <i class="fa-solid fa-user"></i>
             </div>
 
             <div class="input-box">
-                <!-- 🔥 ID added -->
                 <input type="email" id="registerEmail" placeholder="Email" required>
                 <i class="fa-solid fa-envelope"></i>
             </div>
 
             <div class="input-box">
-                <!-- 🔥 ID added -->
                 <input type="password" id="registerPassword" placeholder="Password" required>
                 <i class="fa-solid fa-lock"></i>
             </div>
 
-            <!-- 🔥 ID added -->
             <button type="submit" class="btn" id="registerBtn">Register</button>
 
-            <p>Or register with social platforms</p>
+            <p>Or register with</p>
+
+            <!-- ✅ ONLY GOOGLE -->
             <div class="social-icons">
-                <a href="#"><i class="fa-brands fa-google"></i></a>
-                <a href="#"><i class="fa-brands fa-facebook"></i></a>
-                <a href="#"><i class="fa-brands fa-github"></i></a>
-                <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="#" id="googleRegisterBtn">
+                    <i class="fa-brands fa-google"></i>
+                </a>
             </div>
         </form>
     </div>
 
-    <!-- TOGGLE PANELS (UNCHANGED) -->
+    <!-- TOGGLE -->
     <div class="toggle-box">
         <div class="toggle-panel toggle-left">
             <h1>Hello, Welcome</h1>
@@ -91,7 +87,7 @@
 
         <div class="toggle-panel toggle-right">
             <h1>Welcome Back!</h1>
-            <p>Already have an account</p>
+            <p>Already have an account?</p>
             <button class="btn login-btn">Login</button>
         </div>
     </div>
@@ -103,9 +99,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
-
 <script>
-  const firebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyBMz7pxtjBBwYajEfEhBhF7ADYOgEQX_Po",
   authDomain: "popcorntogether-fd170.firebaseapp.com",
   databaseURL: "https://popcorntogether-fd170-default-rtdb.firebaseio.com",
@@ -121,9 +116,7 @@ if (!firebase.apps.length) {
 
 const auth = firebase.auth();
 const db = firebase.database();
-
 </script>
-
 
 <script src="script.js"></script>
 

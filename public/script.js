@@ -1,21 +1,17 @@
-// Toggle animation (existing code)
-const container = document.querySelector('.container')
-const registerToggleBtn = document.querySelector('.register-btn')
-const loginToggleBtn = document.querySelector('.login-btn')
+// ========== TOGGLE ANIMATION ==========
+const container = document.querySelector('.container');
+const registerToggleBtn = document.querySelector('.register-btn');
+const loginToggleBtn = document.querySelector('.login-btn');
 
 registerToggleBtn.addEventListener('click', () => {
-    container.classList.add('active')
-})
+    container.classList.add('active');
+});
 
 loginToggleBtn.addEventListener('click', () => {
-    container.classList.remove('active')
-})
+    container.classList.remove('active');
+});
 
-/* ===========================
-   FIREBASE AUTH LOGIC
-=========================== */
-
-// ================= LOGIN =================
+// ========== LOGIN (EMAIL + PASSWORD) ==========
 document.getElementById("loginBtn").addEventListener("click", function (e) {
     e.preventDefault();
 
@@ -26,15 +22,12 @@ document.getElementById("loginBtn").addEventListener("click", function (e) {
         .then((userCredential) => {
             const user = userCredential.user;
 
-            // ❌ Email not verified
             if (!user.emailVerified) {
                 alert("❌ Please verify your email before logging in.");
                 firebase.auth().signOut();
                 return;
             }
 
-            // ✅ Email verified
-            alert("Login Successful ✅");
             window.location.href = "/index.html";
         })
         .catch((error) => {
@@ -42,7 +35,7 @@ document.getElementById("loginBtn").addEventListener("click", function (e) {
         });
 });
 
-// ================= REGISTER =================
+// ========== REGISTER ==========
 document.getElementById("registerBtn").addEventListener("click", async (e) => {
     e.preventDefault();
 
@@ -59,22 +52,52 @@ document.getElementById("registerBtn").addEventListener("click", async (e) => {
         const cred = await auth.createUserWithEmailAndPassword(email, password);
         const user = cred.user;
 
-        // 🔥 SEND EMAIL VERIFICATION
         await user.sendEmailVerification();
 
-        // Save user data
         await db.ref("users/" + user.uid).set({
-            username: username,
-            email: email,
+            username,
+            email,
             createdAt: Date.now()
         });
 
-        alert("✅ Registration successful! Please verify your email before login.");
-        firebase.auth().signOut(); // force logout until verified
+        alert("✅ Registration successful! Please verify your email.");
+        firebase.auth().signOut();
         window.location.href = "/Login.html";
 
     } catch (err) {
-        console.error(err);
         alert(err.message);
     }
+});
+
+// ========== GOOGLE LOGIN (LOGIN + REGISTER SAME) ==========
+function googleLogin() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    firebase.auth().signInWithPopup(provider)
+        .then(async (result) => {
+            const user = result.user;
+
+            // Save user if first time
+            await db.ref("users/" + user.uid).update({
+                username: user.displayName || "Google User",
+                email: user.email,
+                provider: "google",
+                createdAt: Date.now()
+            });
+
+            window.location.href = "/index.html";
+        })
+        .catch((error) => {
+            alert(error.message);
+        });
+}
+
+document.getElementById("googleLoginBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    googleLogin();
+});
+
+document.getElementById("googleRegisterBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    googleLogin();
 });
