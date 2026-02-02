@@ -11,6 +11,41 @@ loginToggleBtn.addEventListener('click', () => {
     container.classList.remove('active');
 });
 
+// ========== TOAST ==========
+function showToast(msg, type = "info") {
+    const t = document.getElementById("toast");
+    if (!t) return alert(msg); // fallback safety
+
+    t.innerText = msg;
+    t.className = `toast show ${type}`;
+
+    setTimeout(() => {
+        t.className = "toast";
+    }, 3000);
+}
+
+// ========== MODAL (FOR GOOGLE MERGE) ==========
+function openMergeModal(onConfirm) {
+    const modal = document.getElementById("mergeModal");
+    const pwdInput = document.getElementById("mergePassword");
+    const confirmBtn = document.getElementById("mergeConfirm");
+    const cancelBtn = document.getElementById("mergeCancel");
+
+    modal.style.display = "flex";
+
+    confirmBtn.onclick = () => {
+        const password = pwdInput.value;
+        pwdInput.value = "";
+        modal.style.display = "none";
+        onConfirm(password);
+    };
+
+    cancelBtn.onclick = () => {
+        pwdInput.value = "";
+        modal.style.display = "none";
+    };
+}
+
 // ========== LOGIN (EMAIL + PASSWORD) ==========
 document.getElementById("loginBtn").addEventListener("click", function (e) {
     e.preventDefault();
@@ -23,15 +58,16 @@ document.getElementById("loginBtn").addEventListener("click", function (e) {
             const user = userCredential.user;
 
             if (!user.emailVerified) {
-                alert("❌ Please verify your email before logging in.");
+                showToast("Please verify your email before logging in ❌", "error");
                 firebase.auth().signOut();
                 return;
             }
 
+            showToast("Login successful ✅", "success");
             window.location.href = "/index.html";
         })
         .catch((error) => {
-            alert(error.message);
+            showToast(error.message, "error");
         });
 });
 
@@ -44,7 +80,7 @@ document.getElementById("registerBtn").addEventListener("click", async (e) => {
     const password = document.getElementById("registerPassword").value;
 
     if (!username || !email || !password) {
-        alert("All fields required");
+        showToast("All fields are required", "error");
         return;
     }
 
@@ -60,38 +96,16 @@ document.getElementById("registerBtn").addEventListener("click", async (e) => {
             createdAt: Date.now()
         });
 
-        alert("✅ Registration successful! Please verify your email.");
+        showToast("Registration successful! Verify your email 📩", "success");
         firebase.auth().signOut();
         window.location.href = "/Login.html";
 
     } catch (err) {
-        alert(err.message);
+        showToast(err.message, "error");
     }
 });
 
-// ========== GOOGLE LOGIN (LOGIN + REGISTER SAME) ==========
-// function googleLogin() {
-//     const provider = new firebase.auth.GoogleAuthProvider();
-
-//     firebase.auth().signInWithPopup(provider)
-//         .then(async (result) => {
-//             const user = result.user;
-
-//             // Save user if first time
-//             await db.ref("users/" + user.uid).update({
-//                 username: user.displayName || "Google User",
-//                 email: user.email,
-//                 provider: "google",
-//                 createdAt: Date.now()
-//             });
-
-//             window.location.href = "/index.html";
-//         })
-//         .catch((error) => {
-//             alert(error.message);
-//         });
-// }
-
+// ========== GOOGLE LOGIN (MERGE SAFE) ==========
 function googleLogin() {
     const provider = new firebase.auth.GoogleAuthProvider();
 
@@ -106,6 +120,7 @@ function googleLogin() {
                 lastLogin: Date.now()
             });
 
+            showToast("Google login successful ✅", "success");
             window.location.href = "/index.html";
         })
         .catch(async (error) => {
@@ -115,35 +130,38 @@ function googleLogin() {
                 const email = error.customData.email;
                 const pendingCred = error.credential;
 
-                alert(
-                    "This email is already registered.\nPlease login with email & password once to link Google."
+                showToast(
+                    "Account already exists. Enter website password to link Google.",
+                    "info"
                 );
 
-                // Ask user for password
-                const password = prompt("Enter your password to link Google login:");
+                openMergeModal(async (password) => {
+                    if (!password) {
+                        showToast("Password is required", "error");
+                        return;
+                    }
 
-                if (!password) return;
+                    try {
+                        const userCred = await firebase.auth()
+                            .signInWithEmailAndPassword(email, password);
 
-                try {
-                    // Login using email/password
-                    const userCred = await firebase.auth().signInWithEmailAndPassword(email, password);
+                        await userCred.user.linkWithCredential(pendingCred);
 
-                    // 🔗 LINK GOOGLE TO SAME ACCOUNT
-                    await userCred.user.linkWithCredential(pendingCred);
+                        showToast("Google account linked successfully ✅", "success");
+                        window.location.href = "/index.html";
 
-                    alert("✅ Google account linked successfully!");
-                    window.location.href = "/index.html";
+                    } catch (err) {
+                        showToast(err.message, "error");
+                    }
+                });
 
-                } catch (err) {
-                    alert(err.message);
-                }
             } else {
-                alert(error.message);
+                showToast(error.message, "error");
             }
         });
 }
 
-
+// Google buttons
 document.getElementById("googleLoginBtn").addEventListener("click", (e) => {
     e.preventDefault();
     googleLogin();
@@ -153,7 +171,6 @@ document.getElementById("googleRegisterBtn").addEventListener("click", (e) => {
     e.preventDefault();
     googleLogin();
 });
-
 
 // ========== FORGOT PASSWORD ==========
 const forgotPasswordBtn = document.getElementById("forgotPasswordBtn");
@@ -165,28 +182,15 @@ if (forgotPasswordBtn) {
         const email = document.getElementById("loginEmail").value.trim();
 
         if (!email) {
-            alert("Please enter your email first");
+            showToast("Please enter your email first", "error");
             return;
         }
 
         try {
             await firebase.auth().sendPasswordResetEmail(email);
-            alert("📩 Password reset email sent! Check your inbox.");
+            showToast("Password reset email sent 📩", "success");
         } catch (error) {
-
-            // Google-only account case
-            if (error.code === "auth/user-not-found") {
-                alert("No account found with this email.");
-            } 
-            else if (error.code === "auth/invalid-email") {
-                alert("Invalid email address.");
-            } 
-            else if (error.code === "auth/user-disabled") {
-                alert("This account has been disabled.");
-            }
-            else {
-                alert(error.message);
-            }
+            showToast(error.message, "error");
         }
     });
 }
