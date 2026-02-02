@@ -11,17 +11,17 @@ loginToggleBtn.addEventListener('click', () => {
     container.classList.remove('active');
 });
 
-// ========== TOAST ==========
-function showToast(msg, type = "info") {
+// ========== TOAST (TOP-CENTER + LONGER) ==========
+function showToast(msg, type = "info", duration = 4500) {
     const t = document.getElementById("toast");
-    if (!t) return alert(msg); // fallback safety
+    if (!t) return alert(msg); // safety fallback
 
     t.innerText = msg;
     t.className = `toast show ${type}`;
 
     setTimeout(() => {
         t.className = "toast";
-    }, 3000);
+    }, duration);
 }
 
 // ========== MODAL (FOR GOOGLE MERGE) ==========
@@ -64,7 +64,10 @@ document.getElementById("loginBtn").addEventListener("click", function (e) {
             }
 
             showToast("Login successful ✅", "success");
-            window.location.href = "/index.html";
+
+            setTimeout(() => {
+                window.location.href = "/index.html";
+            }, 2500);
         })
         .catch((error) => {
             showToast(error.message, "error");
@@ -97,8 +100,12 @@ document.getElementById("registerBtn").addEventListener("click", async (e) => {
         });
 
         showToast("Registration successful! Verify your email 📩", "success");
+
         firebase.auth().signOut();
-        window.location.href = "/Login.html";
+
+        setTimeout(() => {
+            window.location.href = "/Login.html";
+        }, 3000);
 
     } catch (err) {
         showToast(err.message, "error");
@@ -121,7 +128,10 @@ function googleLogin() {
             });
 
             showToast("Google login successful ✅", "success");
-            window.location.href = "/index.html";
+
+            setTimeout(() => {
+                window.location.href = "/index.html";
+            }, 2500);
         })
         .catch(async (error) => {
 
@@ -131,8 +141,9 @@ function googleLogin() {
                 const pendingCred = error.credential;
 
                 showToast(
-                    "Account already exists. Enter website password to link Google.",
-                    "info"
+                    "Account exists. Enter website password to link Google.",
+                    "info",
+                    6000
                 );
 
                 openMergeModal(async (password) => {
@@ -148,7 +159,10 @@ function googleLogin() {
                         await userCred.user.linkWithCredential(pendingCred);
 
                         showToast("Google account linked successfully ✅", "success");
-                        window.location.href = "/index.html";
+
+                        setTimeout(() => {
+                            window.location.href = "/index.html";
+                        }, 2500);
 
                     } catch (err) {
                         showToast(err.message, "error");
