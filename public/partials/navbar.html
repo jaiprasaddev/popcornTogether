@@ -1,0 +1,47 @@
+<header>
+  <a class="lg" href="/index.html">
+    <span class="pop">PopCorn</span><span class="together">Together</span>
+  </a>
+
+  <div class="mobile-menu-toggle" id="mobileMenuToggle" onclick="toggleMobileMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <nav id="nav">
+    <ul class="nav_links">
+      <li><a href="/index.html">Home</a></li>
+      <li><a href="/movies.html">Movies</a></li>
+      <li><a href="/room.html">Upload and Watch</a></li>
+      <li><a href="/youtube.html">Watch Youtube</a></li>
+      <li><a href="/services.html">Services</a></li>
+
+      <!-- Mobile Auth -->
+      <li class="mobile-auth-section">
+        <div id="mobileLoginSection" class="mobile-login-wrapper">
+          <a href="/Login.html" class="mobile-login-btn">
+            <button>Login</button>
+          </a>
+        </div>
+
+        <div id="mobileUserSection" class="mobile-user-wrapper" style="display:none;">
+          <div id="mobileUsername" class="mobile-username"></div>
+          <button id="mobileLogoutBtn" class="mobile-logout-btn">Logout</button>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Desktop Auth -->
+  <div class="auth-area desktop-auth">
+    <div id="desktopUserBox" class="desktop-user-box" style="display:none;">
+      <span id="desktopUsername"></span>
+      <button id="desktopLogoutBtn">Logout</button>
+    </div>
+
+    <a class="cta" id="desktopLoginBtn" href="/Login.html">
+      <button>Login</button>
+    </a>
+  </div>
+</header>
