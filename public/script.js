@@ -70,6 +70,28 @@ document.getElementById("registerBtn").addEventListener("click", async (e) => {
 });
 
 // ========== GOOGLE LOGIN (LOGIN + REGISTER SAME) ==========
+// function googleLogin() {
+//     const provider = new firebase.auth.GoogleAuthProvider();
+
+//     firebase.auth().signInWithPopup(provider)
+//         .then(async (result) => {
+//             const user = result.user;
+
+//             // Save user if first time
+//             await db.ref("users/" + user.uid).update({
+//                 username: user.displayName || "Google User",
+//                 email: user.email,
+//                 provider: "google",
+//                 createdAt: Date.now()
+//             });
+
+//             window.location.href = "/index.html";
+//         })
+//         .catch((error) => {
+//             alert(error.message);
+//         });
+// }
+
 function googleLogin() {
     const provider = new firebase.auth.GoogleAuthProvider();
 
@@ -77,20 +99,50 @@ function googleLogin() {
         .then(async (result) => {
             const user = result.user;
 
-            // Save user if first time
             await db.ref("users/" + user.uid).update({
                 username: user.displayName || "Google User",
                 email: user.email,
                 provider: "google",
-                createdAt: Date.now()
+                lastLogin: Date.now()
             });
 
             window.location.href = "/index.html";
         })
-        .catch((error) => {
-            alert(error.message);
+        .catch(async (error) => {
+
+            // 🔴 ACCOUNT EXISTS WITH DIFFERENT CREDENTIAL
+            if (error.code === "auth/account-exists-with-different-credential") {
+                const email = error.customData.email;
+                const pendingCred = error.credential;
+
+                alert(
+                    "This email is already registered.\nPlease login with email & password once to link Google."
+                );
+
+                // Ask user for password
+                const password = prompt("Enter your password to link Google login:");
+
+                if (!password) return;
+
+                try {
+                    // Login using email/password
+                    const userCred = await firebase.auth().signInWithEmailAndPassword(email, password);
+
+                    // 🔗 LINK GOOGLE TO SAME ACCOUNT
+                    await userCred.user.linkWithCredential(pendingCred);
+
+                    alert("✅ Google account linked successfully!");
+                    window.location.href = "/index.html";
+
+                } catch (err) {
+                    alert(err.message);
+                }
+            } else {
+                alert(error.message);
+            }
         });
 }
+
 
 document.getElementById("googleLoginBtn").addEventListener("click", (e) => {
     e.preventDefault();
