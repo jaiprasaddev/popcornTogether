@@ -153,3 +153,40 @@ document.getElementById("googleRegisterBtn").addEventListener("click", (e) => {
     e.preventDefault();
     googleLogin();
 });
+
+
+// ========== FORGOT PASSWORD ==========
+const forgotPasswordBtn = document.getElementById("forgotPasswordBtn");
+
+if (forgotPasswordBtn) {
+    forgotPasswordBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById("loginEmail").value.trim();
+
+        if (!email) {
+            alert("Please enter your email first");
+            return;
+        }
+
+        try {
+            await firebase.auth().sendPasswordResetEmail(email);
+            alert("📩 Password reset email sent! Check your inbox.");
+        } catch (error) {
+
+            // Google-only account case
+            if (error.code === "auth/user-not-found") {
+                alert("No account found with this email.");
+            } 
+            else if (error.code === "auth/invalid-email") {
+                alert("Invalid email address.");
+            } 
+            else if (error.code === "auth/user-disabled") {
+                alert("This account has been disabled.");
+            }
+            else {
+                alert(error.message);
+            }
+        }
+    });
+}
