@@ -582,7 +582,7 @@ form {
 /* lock icon */
 .password-box .fa-lock {
   position: absolute;
-  right: 20px;
+  right: 1.042vw;
   top: 50%;
   transform: translateY(-50%);
   color: #fff;
@@ -592,7 +592,7 @@ form {
 /* eye button */
 .password-box .toggle-password {
   position: absolute;
-  right: 30px;
+  right: 1.563vw;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
