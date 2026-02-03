@@ -14,7 +14,7 @@ loginToggleBtn.addEventListener('click', () => {
 // ========== TOAST (TOP-CENTER + LONGER) ==========
 function showToast(msg, type = "info", duration = 4500) {
     const t = document.getElementById("toast");
-    if (!t) return alert(msg); // safety fallback
+    if (!t) return alert(msg);
 
     t.innerText = msg;
     t.className = `toast show ${type}`;
@@ -23,6 +23,29 @@ function showToast(msg, type = "info", duration = 4500) {
         t.className = "toast";
     }, duration);
 }
+
+// ========== PASSWORD STRENGTH CHECK ==========
+function isStrongPassword(password) {
+    const regex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+    return regex.test(password);
+}
+
+// ========== SHOW / HIDE PASSWORD (EYE BUTTON) ==========
+document.querySelectorAll(".toggle-password").forEach(btn => {
+    btn.addEventListener("click", () => {
+        const input = document.getElementById(btn.dataset.target);
+        const icon = btn.querySelector("i");
+
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.replace("fa-eye", "fa-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.replace("fa-eye-slash", "fa-eye");
+        }
+    });
+});
 
 // ========== MODAL (FOR GOOGLE MERGE) ==========
 function openMergeModal(onConfirm) {
@@ -87,6 +110,16 @@ document.getElementById("registerBtn").addEventListener("click", async (e) => {
         return;
     }
 
+    // 🔐 STRONG PASSWORD VALIDATION
+    if (!isStrongPassword(password)) {
+        showToast(
+          "Password must contain:\n• 1 Capital letter\n• 1 Small letter\n• 1 Number\n• 1 Special character\n• Min 8 characters",
+          "error",
+          6500
+        );
+        return;
+    }
+
     try {
         const cred = await auth.createUserWithEmailAndPassword(email, password);
         const user = cred.user;
@@ -135,7 +168,6 @@ function googleLogin() {
         })
         .catch(async (error) => {
 
-            // 🔴 ACCOUNT EXISTS WITH DIFFERENT CREDENTIAL
             if (error.code === "auth/account-exists-with-different-credential") {
                 const email = error.customData.email;
                 const pendingCred = error.credential;

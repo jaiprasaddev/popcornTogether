@@ -11,6 +11,7 @@
 <body>
 
 <div class="container">
+
     <!-- LOGIN -->
     <div class="form-box login">
         <form>
@@ -21,9 +22,13 @@
                 <i class="fa-solid fa-user"></i>
             </div>
 
-            <div class="input-box">
+            <!-- PASSWORD WITH EYE -->
+            <div class="input-box password-box">
                 <input type="password" id="loginPassword" placeholder="Password" required>
                 <i class="fa-solid fa-lock"></i>
+                <span class="toggle-password" data-target="loginPassword">
+                    <i class="fa-solid fa-eye"></i>
+                </span>
             </div>
 
             <div class="forgot-link">
@@ -57,9 +62,13 @@
                 <i class="fa-solid fa-envelope"></i>
             </div>
 
-            <div class="input-box">
+            <!-- PASSWORD WITH EYE -->
+            <div class="input-box password-box">
                 <input type="password" id="registerPassword" placeholder="Password" required>
                 <i class="fa-solid fa-lock"></i>
+                <span class="toggle-password" data-target="registerPassword">
+                    <i class="fa-solid fa-eye"></i>
+                </span>
             </div>
 
             <button class="btn" id="registerBtn">Register</button>
@@ -88,17 +97,18 @@
             <button class="btn login-btn">Login</button>
         </div>
     </div>
+
 </div>
 
-<!-- 🔔 TOAST -->
+<!-- TOAST -->
 <div id="toast" class="toast"></div>
 
-<!-- 🔐 MERGE MODAL -->
+<!-- MERGE MODAL -->
 <div id="mergeModal" class="modal">
   <div class="modal-box">
     <h3>Link Google Account</h3>
-    <p>Enter your password to link Google login</p>
-    <input type="password" id="mergePassword" placeholder="Password">
+    <p>Enter your website password</p>
+    <input type="password" id="mergePassword">
     <div class="modal-actions">
       <button id="mergeCancel">Cancel</button>
       <button id="mergeConfirm">Confirm</button>
@@ -122,10 +132,7 @@ const firebaseConfig = {
   appId: "1:450280562009:web:9774f54f522f6a34378048"
 };
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-
+firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 </script>
