@@ -64,15 +64,24 @@ if (getStartedBtn) {
 // ========== AUTH UI ==========
 function updateAuthUI(user) {
   if (user && user.emailVerified) {
-    const username = user.email.split("@")[0];
 
-    desktopLoginBtn.style.display = "none";
-    desktopUserBox.style.display = "flex";
-    desktopUsername.innerText = `👤 ${username}`;
+    firebase.database()
+      .ref("users/" + user.uid)
+      .once("value")
+      .then(snapshot => {
+        const data = snapshot.val();
+        const username = data?.username || user.email.split("@")[0];
 
-    mobileLoginSection.style.display = "none";
-    mobileUserSection.style.display = "flex";
-    mobileUsername.innerText = `👤 ${username}`;
+        // Desktop
+        desktopLoginBtn.style.display = "none";
+        desktopUserBox.style.display = "flex";
+        desktopUsername.innerText = `👤 ${username}`;
+
+        // Mobile
+        mobileLoginSection.style.display = "none";
+        mobileUserSection.style.display = "flex";
+        mobileUsername.innerText = `👤 ${username}`;
+      });
 
   } else {
     desktopLoginBtn.style.display = "inline-block";
@@ -82,6 +91,7 @@ function updateAuthUI(user) {
     mobileUserSection.style.display = "none";
   }
 }
+
 
 // ========== AUTH STATE ==========
 firebase.auth().onAuthStateChanged((user) => {
