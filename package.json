@@ -18,8 +18,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.981.0",
+    "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "multer": "^2.0.2",
+    "multer-s3": "^3.0.1",
     "socket.io": "^4.8.3"
   }
 }
