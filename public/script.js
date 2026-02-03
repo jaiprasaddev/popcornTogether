@@ -250,6 +250,28 @@ document.getElementById("googleRegisterBtn").addEventListener("click", (e) => {
 });
 
 // ========== FORGOT PASSWORD ==========
+// const forgotPasswordBtn = document.getElementById("forgotPasswordBtn");
+
+// if (forgotPasswordBtn) {
+//     forgotPasswordBtn.addEventListener("click", async (e) => {
+//         e.preventDefault();
+
+//         const email = document.getElementById("loginEmail").value.trim();
+
+//         if (!email) {
+//             showToast("Please enter your email first", "error");
+//             return;
+//         }
+
+//         try {
+//             await firebase.auth().sendPasswordResetEmail(email);
+//             showToast("Password reset email sent 📩", "success");
+//         } catch (error) {
+//             showToast(error.message, "error");
+//         }
+//     });
+// }
+
 const forgotPasswordBtn = document.getElementById("forgotPasswordBtn");
 
 if (forgotPasswordBtn) {
@@ -264,7 +286,11 @@ if (forgotPasswordBtn) {
         }
 
         try {
-            await firebase.auth().sendPasswordResetEmail(email);
+            await firebase.auth().sendPasswordResetEmail(email, {
+                url: "https://popcorntogether.in/reset-password.html",
+                handleCodeInApp: true
+            });
+
             showToast("Password reset email sent 📩", "success");
         } catch (error) {
             showToast(error.message, "error");

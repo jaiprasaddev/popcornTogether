@@ -62,6 +62,26 @@ if (getStartedBtn) {
 }
 
 // ========== AUTH UI ==========
+// function updateAuthUI(user) {
+//   if (user && user.emailVerified) {
+//     const username = user.email.split("@")[0];
+
+//     desktopLoginBtn.style.display = "none";
+//     desktopUserBox.style.display = "flex";
+//     desktopUsername.innerText = `👤 ${username}`;
+
+//     mobileLoginSection.style.display = "none";
+//     mobileUserSection.style.display = "flex";
+//     mobileUsername.innerText = `👤 ${username}`;
+
+//   } else {
+//     desktopLoginBtn.style.display = "inline-block";
+//     desktopUserBox.style.display = "none";
+
+//     mobileLoginSection.style.display = "block";
+//     mobileUserSection.style.display = "none";
+//   }
+// }
 function updateAuthUI(user) {
   if (user && user.emailVerified) {
 
