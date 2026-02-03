@@ -610,3 +610,12 @@ form {
   padding-right: 70px;
 }
 
+
+@media (max-width: 768px){
+    .password-box .fa-lock {
+        right: 3.166vw;
+    }
+    .password-box .toggle-password {
+        right: 6.25vw;
+    }
+}
