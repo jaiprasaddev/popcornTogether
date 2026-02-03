@@ -574,19 +574,39 @@ form {
   margin-top: 15px;
 }
 
+/* ===== PASSWORD BOX FIX ===== */
 .password-box {
   position: relative;
 }
 
-.toggle-password {
+/* lock icon */
+.password-box .fa-lock {
   position: absolute;
-  right: 15px;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+  pointer-events: none;
+}
+
+/* eye button */
+.password-box .toggle-password {
+  position: absolute;
+  right: 30px;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  color: #666;
+  z-index: 2;
 }
 
-.toggle-password:hover {
-  color: #000;
+/* eye icon */
+.password-box .toggle-password i {
+  color: #ffffff;        /* 👈 WHITE */
+  font-size: 16px;
 }
+
+/* input padding so text doesn't clash */
+.password-box input {
+  padding-right: 70px;
+}
+
