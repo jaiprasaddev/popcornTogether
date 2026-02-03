@@ -31,6 +31,37 @@ function isStrongPassword(password) {
     return regex.test(password);
 }
 
+// ========== PASSWORD STRENGTH METER (REGISTER ONLY) ==========
+function updateStrength(password) {
+    const bar = document.querySelector(".strength-bar");
+    const text = document.querySelector(".strength-text");
+    if (!bar || !text) return;
+
+    let score = 0;
+    if (password.length >= 8) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[a-z]/.test(password)) score++;
+    if (/\d/.test(password)) score++;
+    if (/[@$!%*?&#]/.test(password)) score++;
+
+    if (score <= 2) {
+        bar.style.width = "33%";
+        bar.style.background = "#EF3E3A";
+        text.innerText = "Weak password";
+    } 
+    else if (score <= 4) {
+        bar.style.width = "66%";
+        bar.style.background = "linear-gradient(90deg,#EF3E3A,#A65396)";
+        text.innerText = "Medium password";
+    } 
+    else {
+        bar.style.width = "100%";
+        bar.style.background = "#A65396";
+        text.innerText = "Strong password";
+    }
+}
+
+
 // ========== SHOW / HIDE PASSWORD (EYE BUTTON) ==========
 document.querySelectorAll(".toggle-password").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -238,5 +269,14 @@ if (forgotPasswordBtn) {
         } catch (error) {
             showToast(error.message, "error");
         }
+    });
+}
+
+
+
+const regPwd = document.getElementById("registerPassword");
+if (regPwd) {
+    regPwd.addEventListener("input", () => {
+        updateStrength(regPwd.value);
     });
 }
