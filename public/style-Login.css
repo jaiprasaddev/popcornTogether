@@ -619,3 +619,38 @@ form {
         right: 6.25vw;
     }
 }
+
+
+
+/* AUTH SWITCH */
+.auth-switch {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.auth-btn {
+  padding: 8px 20px;
+  border-radius: 20px;
+  border: 2px solid #555;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.auth-btn.active {
+  border-color: #f9e368;
+  background: #f9e368;
+  color: #000;
+}
+
+/* AUTH SECTIONS */
+.auth-section {
+  display: none;
+}
+
+.auth-section.active-section {
+  display: block;
+}
