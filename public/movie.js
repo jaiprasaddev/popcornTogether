@@ -1,4 +1,6 @@
+// ===============================
 // Mobile menu toggle function
+// ===============================
 function toggleMobileMenu() {
   const nav = document.getElementById('nav');
   const toggle = document.getElementById('mobileMenuToggle');
@@ -10,26 +12,23 @@ const params = new URLSearchParams(window.location.search);
 const movieId = params.get("id");
 const container = document.getElementById("movieDetailContainer");
 
-// Helper function to get YouTube trailer
-async function getYouTubeTrailer(movieTitle, year) {
+// ===============================
+// 🔥 Fetch YouTube trailer from backend (SAFE)
+// ===============================
+async function fetchTrailerVideoId(title, year) {
   try {
-    // Create a search query for YouTube
-    const searchQuery = `${movieTitle} ${year} official trailer`;
-    // Return a YouTube search URL - in production, you'd use YouTube API
-    return `https://www.youtube.com/embed/?search_query=${encodeURIComponent(searchQuery)}`;
-  } catch (error) {
+    const res = await fetch(
+      `/api/trailer?title=${encodeURIComponent(title)}&year=${year}`
+    );
+    return await res.json(); // { videoId }
+  } catch (err) {
     return null;
   }
 }
 
-// Function to create a YouTube embed URL from movie title
-function createTrailerEmbed(title, year) {
-  // This creates a YouTube search embed - ideally you'd use YouTube Data API
-  const searchQuery = encodeURIComponent(`${title} ${year} official trailer`);
-  // Using nocookie domain for privacy
-  return `https://www.youtube-nocookie.com/embed/?listType=search&list=${searchQuery}`;
-}
-
+// ===============================
+// Load movie details
+// ===============================
 async function loadMovieDetails() {
   try {
     const res = await fetch(`/api/movie/${movieId}`);
@@ -49,12 +48,24 @@ async function loadMovieDetails() {
       return;
     }
 
-    const posterUrl = movie.Poster !== "N/A" ? movie.Poster : "https://via.placeholder.com/300x450?text=No+Poster";
+    const posterUrl =
+      movie.Poster !== "N/A"
+        ? movie.Poster
+        : "https://via.placeholder.com/300x450?text=No+Poster";
+
     const rating = movie.imdbRating !== "N/A" ? movie.imdbRating : "N/A";
     const genres = movie.Genre ? movie.Genre.split(', ') : [];
-    const trailerUrl = createTrailerEmbed(movie.Title, movie.Year);
 
-    // Create the movie hero section
+    // 🔥 FETCH REAL TRAILER VIDEO ID
+    const trailerData = await fetchTrailerVideoId(movie.Title, movie.Year);
+    const trailerUrl =
+      trailerData && trailerData.videoId
+        ? `https://www.youtube.com/embed/${trailerData.videoId}`
+        : null;
+
+    // ===============================
+    // Render page
+    // ===============================
     container.innerHTML = `
       <!-- Movie Hero -->
       <section class="movie-hero">
@@ -119,7 +130,9 @@ async function loadMovieDetails() {
       <!-- Overview Section -->
       <section class="overview-section">
         <h2 class="overview-title">Overview</h2>
-        <p class="movie-description">${movie.Plot !== "N/A" ? movie.Plot : 'No description available.'}</p>
+        <p class="movie-description">
+          ${movie.Plot !== "N/A" ? movie.Plot : 'No description available.'}
+        </p>
       </section>
 
       <!-- Additional Info Section -->
@@ -176,12 +189,16 @@ async function loadMovieDetails() {
         <div class="trailer-container">
           <h2>Trailer</h2>
           <div class="trailer-embed">
-            <iframe 
-              src="${trailerUrl}" 
-              frameborder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowfullscreen>
-            </iframe>
+            ${trailerUrl ? `
+              <iframe 
+                src="${trailerUrl}"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+              </iframe>
+            ` : `
+              <p style="opacity:0.7;">Trailer not available</p>
+            `}
           </div>
         </div>
       </section>
@@ -201,10 +218,16 @@ async function loadMovieDetails() {
   }
 }
 
+// ===============================
 // Scroll to trailer section
+// ===============================
 function scrollToTrailer() {
-  document.getElementById('trailerSection').scrollIntoView({ behavior: 'smooth' });
+  document
+    .getElementById('trailerSection')
+    .scrollIntoView({ behavior: 'smooth' });
 }
 
-// Load movie details on page load
+// ===============================
+// Init
+// ===============================
 loadMovieDetails();
