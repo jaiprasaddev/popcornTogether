@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PopCornTogether - Watch Movies Together</title>
+  <link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/movies.css">
+
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header>
+    <!-- Logo -->
+    <a class="lg" href="/movies.html">
+      <span class="pop">PopCorn</span><span class="together">Together</span>
+    </a>
+    
+    <!-- Mobile Menu Toggle (Hamburger) -->
+    <div class="mobile-menu-toggle" id="mobileMenuToggle" onclick="toggleMobileMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    
+    <!-- Navigation Menu -->
+    <nav id="nav">
+      <ul class="nav_links">
+        <li><a href="/movies.html">Home</a></li>
+        <li><a href="/movies.html" class="active">Movies</a></li>
+        <li><a href="/room.html">Upload and Watch</a></li>
+        <li><a href="/youtube.html">Watch Youtube</a></li>
+        <li><a href="/services.html">Services</a></li>
+        
+        <!-- Mobile-only auth section inside hamburger menu -->
+        <li class="mobile-auth-section">
+          <!-- Logged-out state (shows only login button) -->
+          <div id="mobileLoginSection" class="mobile-login-wrapper">
+            <a href="/Login.html" class="mobile-login-btn">
+              <button>Login</button>
+            </a>
+          </div>
+          
+          <!-- Logged-in state (shows username and logout) -->
+          <div id="mobileUserSection" class="mobile-user-wrapper" style="display:none;">
+            <div class="mobile-username" id="mobileUsername"></div>
+            <button id="mobileLogoutBtn" class="mobile-logout-btn">Logout</button>
+          </div>
+        </li>
+      </ul>
+    </nav>
+    
+    <!-- Desktop auth area (visible only on desktop) -->
+    <div class="auth-area desktop-auth">
+      <!-- Logged-in user display -->
+      <div id="desktopUserBox" class="desktop-user-box" style="display:none;">
+        <span id="desktopUsername"></span>
+        <button id="desktopLogoutBtn">Logout</button>
+      </div>
+
+      <!-- Login button (shown when logged out) -->
+      <a class="cta" id="desktopLoginBtn" href="/Login.html" style="display:inline-block;">
+        <button>Login</button>
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section" id="home">
+    <div class="hero-background"></div>
+    <div class="hero-content">
+      <h1 class="hero-title">Watch Movies Together, Anywhere</h1>
+      <p class="hero-description">
+        Discover thousands of movies and TV shows. Create watch rooms and enjoy synchronized viewing with friends and family across the globe.
+      </p>
+      <!-- Search bar in hero -->
+      <div class="hero-search-container">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          class="hero-search-bar" 
+          id="searchInput" 
+          placeholder="Search movies, TV shows, actors..."
+          autocomplete="off"
+        />
+      </div>
+      <div class="hero-buttons">
+        <button class="btn btn-secondary" onclick="scrollToSection('trending')">
+          ✨ Explore Trending
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Search Results Section -->
+  <section class="search-results-section" id="searchResults" style="display:none;">
+    <div class="section-header">
+      <h2 class="section-title">Search Results</h2>
+    </div>
+    <div class="movie-slider" id="searchList"></div>
+  </section>
+
+  <!-- Trending Section -->
+  <section class="movie-section" id="trending">
+    <div class="section-header">
+      <h2 class="section-title">🔥 Trending Now</h2>
+    </div>
+    <div class="movie-slider" id="trendingList">
+      <div class="loading">
+        <div class="spinner"></div>
+        Loading trending movies...
+      </div>
+    </div>
+  </section>
+
+  <!-- Top Rated Section -->
+  <section class="movie-section" id="top-rated">
+    <div class="section-header">
+      <h2 class="section-title">⭐ Top Rated Movies</h2>
+    </div>
+    <div class="movie-slider" id="topRatedList">
+      <div class="loading">
+        <div class="spinner"></div>
+        Loading top rated movies...
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular Section -->
+  <section class="movie-section" id="popular">
+    <div class="section-header">
+      <h2 class="section-title">🎭 Popular Classics</h2>
+    </div>
+    <div class="movie-slider" id="popularList">
+      <div class="loading">
+        <div class="spinner"></div>
+        Loading popular movies...
+      </div>
+    </div>
+  </section>
+
+  <!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+<!-- EXISTING AUTH LOGIC (same as index.html) -->
+<script src="./index.js"></script>
+
+<!-- Movies logic -->
+<script src="./movies.js"></script>
+
+</body>
+</html>

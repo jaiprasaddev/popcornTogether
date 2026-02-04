@@ -1,7 +1,7 @@
 {
   "name": "watch-together",
   "version": "1.0.0",
-  "description": "Watch Together App - YouTube & File Upload Syncing",
+  "description": "Watch Together App - YouTube & File Upload Syncing with Movie Search",
   "main": "server.js",
   "type": "commonjs",
   "scripts": {
@@ -13,7 +13,9 @@
     "video-sync",
     "youtube",
     "file-upload",
-    "socket.io"
+    "socket.io",
+    "movies",
+    "omdb"
   ],
   "author": "",
   "license": "ISC",
@@ -23,6 +25,7 @@
     "express": "^5.2.1",
     "multer": "^2.0.2",
     "multer-s3": "^3.0.1",
+    "node-fetch": "^2.7.0",
     "socket.io": "^4.8.3"
   }
 }

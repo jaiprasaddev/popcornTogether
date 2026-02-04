@@ -1,3 +1,6 @@
+const fetch = require('node-fetch');
+const dotenv = require('dotenv');
+dotenv.config();
 const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
@@ -5,6 +8,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+
 
 const app = express();
 const server = http.createServer(app);
@@ -488,6 +492,138 @@ app.post('/upload', (req, res) => {
         }
     });
 });
+
+app.get("/api/search", async (req, res) => {
+  const q = req.query.q;
+  if (!q) return res.json([]);
+
+  try {
+    const url = `https://www.omdbapi.com/?apikey=${process.env.OMDB_API_KEY}&s=${q}`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.Response === "False") return res.json([]);
+    res.json(data.Search);
+  } catch (error) {
+    console.error('Search error:', error);
+    res.status(500).json([]);
+  }
+});
+
+// ============================================
+// MOVIE DETAILS ENDPOINT
+// ============================================
+app.get("/api/movie/:id", async (req, res) => {
+  try {
+    const url = `https://www.omdbapi.com/?apikey=${process.env.OMDB_API_KEY}&i=${req.params.id}&plot=full`;
+    const response = await fetch(url);
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error('Movie detail error:', error);
+    res.status(500).json({ error: "Movie fetch failed" });
+  }
+});
+
+// ============================================
+// TOP RATED MOVIES ENDPOINT
+// ============================================
+app.get("/api/top-rated", async (req, res) => {
+  const topMovies = [
+    "tt0111161", // The Shawshank Redemption
+    "tt0068646", // The Godfather
+    "tt0468569", // The Dark Knight
+    "tt0071562", // The Godfather Part II
+    "tt0050083", // 12 Angry Men
+    "tt0108052", // Schindler's List
+    "tt0167260", // The Lord of the Rings: The Return of the King
+    "tt0110912", // Pulp Fiction
+    "tt0060196", // The Good, the Bad and the Ugly
+    "tt0120737", // The Lord of the Rings: The Fellowship of the Ring
+  ];
+
+  try {
+    const movies = await Promise.all(
+      topMovies.map(async (id) => {
+        const url = `https://www.omdbapi.com/?apikey=${process.env.OMDB_API_KEY}&i=${id}`;
+        const response = await fetch(url);
+        return await response.json();
+      })
+    );
+    res.json(movies);
+  } catch (error) {
+    console.error('Top rated error:', error);
+    res.status(500).json([]);
+  }
+});
+
+// ============================================
+// POPULAR MOVIES ENDPOINT
+// ============================================
+app.get("/api/popular", async (req, res) => {
+  const popularMovies = [
+    "tt0816692", // Interstellar
+    "tt1375666", // Inception
+    "tt0109830", // Forrest Gump
+    "tt0133093", // The Matrix
+    "tt0137523", // Fight Club
+    "tt0245429", // Spirited Away
+    "tt0114369", // Se7en
+    "tt0102926", // The Silence of the Lambs
+    "tt0118799", // Life Is Beautiful
+    "tt0317248", // City of God
+  ];
+
+  try {
+    const movies = await Promise.all(
+      popularMovies.map(async (id) => {
+        const url = `https://www.omdbapi.com/?apikey=${process.env.OMDB_API_KEY}&i=${id}`;
+        const response = await fetch(url);
+        return await response.json();
+      })
+    );
+    res.json(movies);
+  } catch (error) {
+    console.error('Popular movies error:', error);
+    res.status(500).json([]);
+  }
+});
+
+// ============================================
+// TRENDING MOVIES ENDPOINT
+// ============================================
+app.get("/api/trending", async (req, res) => {
+  const trendingMovies = [
+    "tt15398776", // Oppenheimer
+    "tt6710474",  // Everything Everywhere All at Once
+    "tt1517268",  // Barbie
+    "tt9362722",  // Spider-Man: Across the Spider-Verse
+    "tt14230458", // Poor Things
+    "tt10366206", // John Wick: Chapter 4
+    "tt9603212",  // Killers of the Flower Moon
+    "tt1160419",  // Dune
+    "tt15009428", // Dune: Part Two
+  ];
+
+  try {
+    const movies = await Promise.all(
+      trendingMovies.map(async (id) => {
+        const url = `https://www.omdbapi.com/?apikey=${process.env.OMDB_API_KEY}&i=${id}`;
+        const response = await fetch(url);
+        return await response.json();
+      })
+    );
+    res.json(movies.filter(m => m.Response !== "False"));
+  } catch (error) {
+    console.error('Trending movies error:', error);
+    res.status(500).json([]);
+  }
+});
+
+// ============================================
+// Add these endpoints BEFORE your existing routes
+// and BEFORE app.listen()
+// ============================================
 
 // Error handling middleware
 app.use((err, req, res, next) => {
