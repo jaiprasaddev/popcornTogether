@@ -62,17 +62,51 @@ async function loadMovieDetails() {
         <div class="movie-hero-content">
           <img src="${posterUrl}" alt="${movie.Title}" class="movie-poster-large">
           <div class="movie-details">
+            <div class="movie-type-year">
+              ${movie.Type ? movie.Type.charAt(0).toUpperCase() + movie.Type.slice(1) : 'Movie'} • ${movie.Year}
+            </div>
             <h1 class="movie-detail-title">${movie.Title}</h1>
+            
             <div class="movie-detail-meta">
-              ${rating !== "N/A" ? `<span class="imdb-rating">⭐ ${rating}</span>` : ''}
-              <span>${movie.Year}</span>
-              ${movie.Runtime !== "N/A" ? `<span>⏱️ ${movie.Runtime}</span>` : ''}
-              ${movie.Rated !== "N/A" ? `<span>🎫 ${movie.Rated}</span>` : ''}
+              ${movie.Director !== "N/A" ? `
+                <div class="meta-item">
+                  <div class="meta-label">Directed By</div>
+                  <div class="meta-value">${movie.Director}</div>
+                </div>
+              ` : ''}
+              
+              ${movie.Country !== "N/A" ? `
+                <div class="meta-item">
+                  <div class="meta-label">Country</div>
+                  <div class="meta-value">${movie.Country}</div>
+                </div>
+              ` : ''}
+              
+              ${movie.Language !== "N/A" ? `
+                <div class="meta-item">
+                  <div class="meta-label">Language</div>
+                  <div class="meta-value">${movie.Language}</div>
+                </div>
+              ` : ''}
+              
+              ${movie.Rated !== "N/A" ? `
+                <div class="meta-item">
+                  <div class="meta-label">Age Rating</div>
+                  <div class="meta-value">${movie.Rated}</div>
+                </div>
+              ` : ''}
             </div>
-            <div class="genre-tags">
-              ${genres.map(genre => `<span class="genre-tag">${genre}</span>`).join('')}
-            </div>
-            <p class="movie-description">${movie.Plot !== "N/A" ? movie.Plot : 'No description available.'}</p>
+
+            ${genres.length > 0 ? `
+              <div class="genre-tags">
+                ${genres.map(genre => `<span class="genre-tag">${genre}</span>`).join('')}
+              </div>
+            ` : ''}
+
+            ${rating !== "N/A" ? `
+              <div class="imdb-rating">⭐ ${rating} IMDb</div>
+            ` : ''}
+            
             <div class="movie-actions">
               <button class="btn btn-secondary" onclick="scrollToTrailer()">
                 ▶️ Watch Trailer
@@ -82,52 +116,65 @@ async function loadMovieDetails() {
         </div>
       </section>
 
-      <!-- Additional Info Section -->
-      <section class="movie-section" style="background: #0f0f0f;">
-        <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
-          ${movie.Director !== "N/A" ? `
-            <div>
-              <h3 style="color: var(--secondary); margin-bottom: 10px; font-size: 14px;">🎬 Director</h3>
-              <p style="font-size: 16px;">${movie.Director}</p>
-            </div>
-          ` : ''}
-          ${movie.Actors !== "N/A" ? `
-            <div>
-              <h3 style="color: var(--secondary); margin-bottom: 10px; font-size: 14px;">🎭 Cast</h3>
-              <p style="font-size: 16px;">${movie.Actors}</p>
-            </div>
-          ` : ''}
-          ${movie.Writer !== "N/A" ? `
-            <div>
-              <h3 style="color: var(--secondary); margin-bottom: 10px; font-size: 14px;">✍️ Writer</h3>
-              <p style="font-size: 16px;">${movie.Writer}</p>
-            </div>
-          ` : ''}
-          ${movie.Awards !== "N/A" ? `
-            <div>
-              <h3 style="color: var(--secondary); margin-bottom: 10px; font-size: 14px;">🏆 Awards</h3>
-              <p style="font-size: 16px;">${movie.Awards}</p>
-            </div>
-          ` : ''}
-          ${movie.BoxOffice !== "N/A" ? `
-            <div>
-              <h3 style="color: var(--secondary); margin-bottom: 10px; font-size: 14px;">💰 Box Office</h3>
-              <p style="font-size: 16px;">${movie.BoxOffice}</p>
-            </div>
-          ` : ''}
-          ${movie.Released !== "N/A" ? `
-            <div>
-              <h3 style="color: var(--secondary); margin-bottom: 10px; font-size: 14px;">📅 Released</h3>
-              <p style="font-size: 16px;">${movie.Released}</p>
-            </div>
-          ` : ''}
-        </div>
+      <!-- Overview Section -->
+      <section class="overview-section">
+        <h2 class="overview-title">Overview</h2>
+        <p class="movie-description">${movie.Plot !== "N/A" ? movie.Plot : 'No description available.'}</p>
       </section>
+
+      <!-- Additional Info Section -->
+      ${movie.Actors !== "N/A" || movie.Writer !== "N/A" || movie.Awards !== "N/A" || movie.BoxOffice !== "N/A" || movie.Runtime !== "N/A" || movie.Released !== "N/A" ? `
+        <section class="additional-info">
+          <div class="info-grid">
+            ${movie.Actors !== "N/A" ? `
+              <div class="info-item">
+                <h3>Cast</h3>
+                <p>${movie.Actors}</p>
+              </div>
+            ` : ''}
+            
+            ${movie.Writer !== "N/A" ? `
+              <div class="info-item">
+                <h3>Writer</h3>
+                <p>${movie.Writer}</p>
+              </div>
+            ` : ''}
+            
+            ${movie.Runtime !== "N/A" ? `
+              <div class="info-item">
+                <h3>Runtime</h3>
+                <p>${movie.Runtime}</p>
+              </div>
+            ` : ''}
+            
+            ${movie.Released !== "N/A" ? `
+              <div class="info-item">
+                <h3>Released</h3>
+                <p>${movie.Released}</p>
+              </div>
+            ` : ''}
+            
+            ${movie.Awards !== "N/A" ? `
+              <div class="info-item">
+                <h3>Awards</h3>
+                <p>${movie.Awards}</p>
+              </div>
+            ` : ''}
+            
+            ${movie.BoxOffice !== "N/A" ? `
+              <div class="info-item">
+                <h3>Box Office</h3>
+                <p>${movie.BoxOffice}</p>
+              </div>
+            ` : ''}
+          </div>
+        </section>
+      ` : ''}
 
       <!-- Trailer Section -->
       <section class="trailer-section" id="trailerSection">
         <div class="trailer-container">
-          <h2 class="section-title" style="margin-bottom: 30px;">🎥 Trailer</h2>
+          <h2>Trailer</h2>
           <div class="trailer-embed">
             <iframe 
               src="${trailerUrl}" 
