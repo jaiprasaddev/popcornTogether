@@ -664,6 +664,176 @@ app.get("/api/trailer", async (req, res) => {
   }
 });
 
+// ============================================
+// ✨ AI RECOMMENDATION ENDPOINT
+// Supports BOTH OpenAI and OpenRouter
+// ============================================
+app.post("/api/ai-recommendation", async (req, res) => {
+  try {
+    const { message } = req.body;
+    
+    if (!message || message.trim() === "") {
+      return res.status(400).json({ 
+        success: false,
+        error: "Message is required" 
+      });
+    }
+
+    console.log("🤖 AI Recommendation Request:", message);
+
+    // Determine which AI service to use
+    const useOpenRouter = !!process.env.OPENROUTER_API_KEY;
+    const useOpenAI = !!process.env.OPENAI_API_KEY;
+
+    if (!useOpenRouter && !useOpenAI) {
+      console.error("❌ No AI API key configured");
+      return res.status(500).json({ 
+        success: false,
+        error: "AI service not configured. Please add OPENROUTER_API_KEY or OPENAI_API_KEY to .env file" 
+      });
+    }
+
+    const systemPrompt = `
+    Today's date: ${new Date().toDateString()}.
+    Always assume current year correctly.
+If future releases are uncertain, suggest recent or anticipated titles.
+
+Language rule:
+- Default English.
+- If user writes Hinglish/Hindi → reply Hinglish.
+- Match user's language tone.
+You are Popcorn AI, an expert entertainment recommendation assistant for PopCornTogether, a movie, TV show, and anime streaming platform.
+
+Your role:
+Provide personalized, engaging, and accurate recommendations for movies, TV shows, and anime.
+
+Guidelines:
+- Provide 3–5 recommendations maximum.
+- Include for each recommendation:
+  • Title (bold)
+  • Year
+  • Genre
+  • Short spoiler-free description (2–3 sentences)
+  • Why it fits the user’s request
+- Consider user mood, preferred genres, themes, similar titles, and popularity.
+- Keep responses friendly, enthusiastic, and concise.
+- Use clean formatting with bullet points.
+- Avoid spoilers completely.
+- If asked about non-entertainment topics, politely redirect back to entertainment recommendations.
+
+Goal:
+Make recommendations feel personalized, exciting, and immediately watchable — similar to Netflix-style suggestions.
+`;
+
+    let apiUrl, apiKey, requestBody, headers;
+
+    if (useOpenRouter) {
+      // ✅ OPENROUTER CONFIGURATION
+      console.log("🔄 Using OpenRouter API");
+      
+      apiUrl = "https://openrouter.ai/api/v1/chat/completions";
+      apiKey = process.env.OPENROUTER_API_KEY;
+      
+      // Choose model - you can change this to any OpenRouter model
+      // Popular choices:
+      // - "meta-llama/llama-3.1-8b-instruct:free" (FREE!)
+      // - "google/gemini-flash-1.5" (cheap and fast)
+      // - "anthropic/claude-3.5-sonnet" (best quality)
+      const model = process.env.OPENROUTER_MODEL || "meta-llama/llama-3.1-8b-instruct:free";
+      
+      headers = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`,
+        "HTTP-Referer": process.env.APP_URL || "http://localhost:3000",
+        "X-Title": "PopCornTogether"
+      };
+      
+      requestBody = {
+        model: model,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: message }
+        ],
+        max_tokens: 800,
+        temperature: 0.7
+      };
+
+    } else {
+      // ✅ OPENAI CONFIGURATION
+      // ✅ OPENAI CONFIGURATION
+console.log("🔄 Using OpenAI API");
+
+apiUrl = "https://api.openai.com/v1/chat/completions";
+apiKey = process.env.OPENAI_API_KEY;
+
+headers = {
+  "Content-Type": "application/json",
+  "Authorization": `Bearer ${apiKey}`
+};
+
+requestBody = {
+  model: "gpt-4.1-mini",
+  messages: [
+    { role: "system", content: systemPrompt },
+    { role: "user", content: message }
+  ],
+  max_tokens: 600,
+  temperature: 0.7
+};
+
+
+
+
+    }
+
+    // Make API request
+    const aiResponse = await fetch(apiUrl, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(requestBody)
+    });
+
+    if (!aiResponse.ok) {
+      const errorData = await aiResponse.json();
+      console.error("❌ AI API Error:", errorData);
+      
+      if (aiResponse.status === 401) {
+        return res.status(500).json({
+          success: false,
+          error: "AI service authentication failed. Please check your API key."
+        });
+      }
+      
+      throw new Error(errorData.error?.message || "AI API request failed");
+    }
+
+    const aiData = await aiResponse.json();
+    const aiResponseText =
+  aiData.choices?.[0]?.message?.content ||
+  aiData.choices?.[0]?.text ||
+  "No response generated";
+
+
+
+    // const aiResponseText = "DEBUG MODE";
+
+
+
+    console.log("✅ AI Response generated successfully");
+
+    res.json({ 
+      success: true,
+      response: aiResponseText 
+    });
+
+  } catch (error) {
+    console.error("❌ AI Recommendation Error:", error);
+    res.status(500).json({ 
+      success: false,
+      error: "Failed to generate recommendation. Please try again." 
+    });
+  }
+});
 
 
 // Error handling middleware
@@ -695,24 +865,34 @@ const localIP = getLocalIP();
 server.listen(PORT, '0.0.0.0', () => {
     console.log('');
     console.log('╔═══════════════════════════════════════════════════╗');
-    console.log('║       🎬 Watch Together Unified Server          ║');
+    console.log('║       🎬 PopCornTogether Server                   ║');
     console.log('╚═══════════════════════════════════════════════════╝');
     console.log('');
     console.log('🌐 Server running at:');
     console.log(`   📍 Local:    http://localhost:${PORT}`);
     console.log(`   📱 Network:  http://${localIP}:${PORT}`);
     console.log('');
-    console.log('📺 Supported Modes:');
-    console.log('   ✅ YouTube Together (youtube.html)');
-    console.log('   ✅ Upload & Watch (room.html)');
+    console.log('📺 Features:');
+    console.log('   ✅ YouTube Together');
+    console.log('   ✅ Upload & Watch');
+    console.log('   ✅ AI Recommendations');
     console.log('');
     console.log('⚙️  Configuration:');
     console.log('   📂 Upload directory: ./uploads');
     console.log('   📦 Max file size: 5GB');
-    console.log('   👑 Host/Master control: Enabled');
-    console.log('   📊 Upload progress: Enabled');
-    console.log('   🔄 Room sync: Enabled');
-    console.log('   ✅ Accepts: ALL file types');
+    
+    // Check which AI service is configured
+    if (process.env.OPENROUTER_API_KEY) {
+        const model = process.env.OPENROUTER_MODEL || "meta-llama/llama-3.1-8b-instruct:free";
+        console.log('   🤖 AI Service: ✅ OpenRouter');
+        console.log(`   🎯 AI Model: ${model}`);
+    } else if (process.env.OPENAI_API_KEY) {
+        console.log('   🤖 AI Service: ✅ OpenAI (GPT-3.5)');
+    } else {
+        console.log('   🤖 AI Service: ❌ Not configured');
+        console.log('   💡 Add OPENROUTER_API_KEY or OPENAI_API_KEY to .env');
+    }
+    
     console.log('');
     console.log('💡 Make sure all devices are on the same WiFi network!');
     console.log('');
