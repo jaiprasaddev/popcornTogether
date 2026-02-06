@@ -668,7 +668,7 @@ app.get("/api/trailer", async (req, res) => {
 // ✨ AI RECOMMENDATION ENDPOINT
 // Supports BOTH OpenAI and OpenRouter
 // ============================================
-app.post("/api/ai-recommendation", async (req, res) => {
+/*app.post("/api/ai-recommendation", async (req, res) => {
   try {
     const { message } = req.body;
     
@@ -833,7 +833,7 @@ requestBody = {
       error: "Failed to generate recommendation. Please try again." 
     });
   }
-});
+});*/
 
 
 // Error handling middleware
