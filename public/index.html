@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>PopCornTogether</title>
     <link rel="stylesheet" href="style.css" />
     <link
@@ -12,10 +12,34 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  </head>
+    <link rel="stylesheet" href="/custom-cursor.css">
+</head>
   <body>
    
-    <header>
+    
+    <!-- Cinematic OTT Loader -->
+    <div id="cinematicLoader" class="cinematic-loader">
+      <div class="loader-content">
+        <div class="loader-logo">
+          <span class="pop">PopCorn</span><span class="together">Together</span>
+        </div>
+        <div class="loader-text-container">
+          <span class="loader-text">Loading The Vibe</span>
+          <span class="loader-dots">
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+          </span>
+        </div>
+        <div class="loader-progress">
+          <div class="progress-bar">
+            <div class="progress-fill"></div>
+          </div>
+        </div>
+        <div class="loader-ambient-glow"></div>
+      </div>
+    </div>
+   <header>
       <!-- Logo -->
       <a class="lg" href="/public/index.html">
         <span class="pop">PopCorn</span><span class="together">Together</span>
@@ -70,158 +94,230 @@
       </div>
     </header>
 
+    <!-- Hero Section -->
     <section class="hero">
-      <div class="hero-Video">
+      <div class="hero-Video" data-reveal="left">
         <video autoplay loop muted playsinline src="/Asset/videos/landing.mp4">
           Your browser does not support the video tag.
         </video>
+        <div class="video-glow"></div>
       </div>
 
-      <div class="hero-Text">
-        <h1>Watch Movies <span>Together</span></h1>
-        <br />
-        <p>
-          Stream movies and videos with your friends in real-time, <br />
+      <div class="hero-Text" data-reveal="right">
+        <h1>Watch Movies <span class="gradient-text">Together</span></h1>
+        <p class="hero-subtitle">
+          Stream movies and videos with your friends in real-time, 
           no matter where you are.
         </p>
-        <br />
-        <p>
+        <p class="hero-description">
           <span class="pop">PopCorn</span><span class="together">Together</span> synchronizes video playback
-          and adds group chat
+          and adds group chat for the ultimate shared experience.
         </p>
-        <br />
-        <a href="#" id="getStartedBtn" class="btn-primary">Get Started</a>
-
+        <a href="#" id="getStartedBtn" class="btn-primary">
+          <span>Get Started</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
       </div>
     </section>
 
-    <section class="feature">
-      <h1>Features</h1>
+    <!-- Features Section - Modern Bento Grid -->
+    <section class="feature" id="features">
+      <div class="section-header" data-reveal="up">
+        <h1>Epic <span class="gradient-text">Features</span></h1>
+        <p class="section-subtitle">Elevate your watching experience with tools built for community and immersion.</p>
+      </div>
 
-      <div class="feature-container">
-        <div class="feature-card">
-          <div class="feature-card-inner">
-            <div class="feature-card-front">
-              <i class="fa-solid fa-circle-play"></i>
-              <h2>Sync Playback</h2>
+      <div class="feature-grid">
+        <!-- Large Feature Card - Sync Playback -->
+        <div class="feature-card feature-card-large" data-reveal="up" data-delay="100">
+          <div class="feature-card-content">
+            <div class="feature-icon-wrapper">
+              <i class="fa-solid fa-wave-square"></i>
             </div>
-            <div class="feature-card-back">
-              <p>
-                No more countdowns or delays. Every pause, play, or skip happens
-                at the exact same time for everyone in the room
-              </p>
-            </div>
+            <h2>Perfect Sync Playback</h2>
+            <p>Our proprietary synchronization engine ensures every frame reaches every viewer at the exact same millisecond. No more "Wait, what just happened?" or spoilers from friends on faster connections.</p>
+            <a href="#" class="feature-link">
+              <span>Learn more</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </a>
           </div>
+          <div class="feature-card-glow"></div>
         </div>
 
-        <div class="feature-card">
-          <div class="feature-card-inner">
-            <div class="feature-card-front">
-              <i class="fa-solid fa-user-group"></i>
-              <h2>Watch with Friends</h2>
-            </div>
-            <div class="feature-card-back">
-              <p>
-                Whether your friends are next door or across the globe, enjoy a
-                virtual movie night that feels just like sitting together
-              </p>
-            </div>
+        <!-- Medium Feature Card - Watch with Friends -->
+        <div class="feature-card feature-card-medium" data-reveal="up" data-delay="200">
+          <div class="feature-avatars">
+            <div class="avatar avatar-1"></div>
+            <div class="avatar avatar-2"></div>
+            <div class="avatar avatar-3"></div>
+            <div class="avatar-count">+12</div>
           </div>
+          <h2>Watch with Friends</h2>
+          <p>Real-time presence and reaction emojis for that theater vibe.</p>
+          <div class="feature-card-glow"></div>
         </div>
 
-        <div class="feature-card">
-          <div class="feature-card-inner">
-            <div class="feature-card-front">
-              <i class="fa-solid fa-square-plus"></i>
-              <h2>Upload and Watch</h2>
-            </div>
-            <div class="feature-card-back">
-              <p>
-                Upload personal videos or local files and stream them with
-                friends. Everyone sees exactly what you share, instantly
-              </p>
-            </div>
+        <!-- Medium Feature Card - Upload and Watch -->
+        <div class="feature-card feature-card-medium" data-reveal="up" data-delay="300">
+          <div class="feature-icon-wrapper small">
+            <i class="fa-solid fa-cloud-upload"></i>
           </div>
+          <h2>Upload and Watch</h2>
+          <p>Host your own files with high-speed CDN delivery worldwide.</p>
+          <div class="feature-card-glow"></div>
         </div>
 
-        <div class="feature-card">
-          <div class="feature-card-inner">
-            <div class="feature-card-front">
+        <!-- Wide Feature Card - YouTube Integration -->
+        <div class="feature-card feature-card-wide" data-reveal="up" data-delay="400">
+          <div class="feature-card-wide-content">
+            <div class="feature-badge">
               <i class="fa-brands fa-youtube"></i>
-              <h2>Play YouTube Together</h2>
+              <span>YouTube Integrated</span>
             </div>
-            <div class="feature-card-back">
-              <p>
-                From music videos to lectures, enjoy millions of YouTube videos
-                together in real-time. Perfect for fun, study, or events
-              </p>
+            <h2>YouTube Integration</h2>
+            <p>Stream any public video from YouTube directly into your shared room with a simple paste. Create watch-party playlists in seconds.</p>
+          </div>
+          <div class="feature-preview">
+            <div class="play-button">
+              <i class="fa-solid fa-play"></i>
             </div>
+          </div>
+          <div class="feature-card-glow"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section - Vertical Timeline -->
+    <section class="how-it-works" id="how-it-works">
+      <div class="section-header" data-reveal="up">
+        <h1>How It <span class="gradient-text">Works</span></h1>
+        <p class="section-subtitle">Get started in minutes and start watching together.</p>
+      </div>
+
+      <div class="timeline-container">
+        <div class="timeline-line">
+          <div class="timeline-progress"></div>
+        </div>
+        
+        <!-- Step 1 -->
+        <div class="timeline-step" data-reveal="left" data-step="1">
+          <div class="timeline-content">
+            <div class="step-number">01</div>
+            <div class="step-icon-wrapper">
+              <i class="fa-solid fa-hand-pointer"></i>
+            </div>
+            <h2>Create a Room</h2>
+            <p>Start your own private watch room with a single click. No complicated setup required.</p>
+          </div>
+          <div class="timeline-dot">
+            <div class="timeline-dot-inner"></div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="timeline-step" data-reveal="right" data-step="2">
+          <div class="timeline-content">
+            <div class="step-number">02</div>
+            <div class="step-icon-wrapper">
+              <i class="fa-solid fa-circle-play"></i>
+            </div>
+            <h2>Upload or Paste Link</h2>
+            <p>Add your own video files or paste any YouTube URL to start streaming instantly.</p>
+          </div>
+          <div class="timeline-dot">
+            <div class="timeline-dot-inner"></div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="timeline-step" data-reveal="left" data-step="3">
+          <div class="timeline-content">
+            <div class="step-number">03</div>
+            <div class="step-icon-wrapper">
+              <i class="fa-solid fa-user-plus"></i>
+            </div>
+            <h2>Invite Friends</h2>
+            <p>Share your unique room link with friends. They can join from anywhere in the world.</p>
+          </div>
+          <div class="timeline-dot">
+            <div class="timeline-dot-inner"></div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="timeline-step" data-reveal="right" data-step="4">
+          <div class="timeline-content">
+            <div class="step-number">04</div>
+            <div class="step-icon-wrapper">
+              <i class="fa-solid fa-tv"></i>
+            </div>
+            <h2>Watch Together</h2>
+            <p>Enjoy perfectly synchronized playback with real-time chat and reactions.</p>
+          </div>
+          <div class="timeline-dot">
+            <div class="timeline-dot-inner"></div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="how-it-works">
-      <h1>How It Works</h1>
-      <div class="steps-container">
-        <div class="step-card">
-          <i class="fa-solid fa-hand-pointer"></i>
-          <h2>Create a Room</h2>
-        </div>
-        <div class="step-card">
-          <i class="fa-solid fa-circle-play"></i>
-          <h2>Upload Video or Paste YouTube Link</h2>
-        </div>
-        <div class="step-card">
-          <i class="fa-solid fa-user-plus"></i>
-          <h2>Invite Friends</h2>
-        </div>
-        <div class="step-card">
-          <i class="fa-solid fa-tv"></i>
-          <h2>Watch Together</h2>
-        </div>
+    <!-- CTA Section -->
+    <section class="cta-section" data-reveal="up">
+      <div class="cta-content">
+        <h2>Ready to Watch Together?</h2>
+        <p>Join thousands of users enjoying synchronized movie nights with friends and family.</p>
+        <a href="#" id="getStartedBtnCta" class="btn-primary btn-large">
+          <span>Start Watching Now</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
       </div>
+      <div class="cta-glow"></div>
     </section>
 
+    <!-- Footer -->
     <footer class="footer">
-        <div class="footer-container">
-          <div class="footer-left">
-            <h2><span class="pop">PopCorn</span><span class="together">Together</span></h2>
-            <p>Stream movies together, anywhere, anytime.</p>
-          </div>
-          <div class="footer-middle">
-            <h3>Quick Links</h3>
-            <ul>
-              <li><a href="#">Home</a></li>
-              <li><a href="#">Features</a></li>
-              <li><a href="#">How It Works</a></li>
-              <li><a href="#">Services</a></li>
-            </ul>
-          </div>
-          <div class="footer-right">
-            <h3>Follow Us</h3>
-            <div class="socials">
-              <a href="#"><i class="fa-brands fa-facebook"></i></a>
-              <a href="#"><i class="fa-brands fa-instagram"></i></a>
-              <a href="#"><i class="fa-brands fa-twitter"></i></a>
-              <a href="#"><i class="fa-brands fa-youtube"></i></a>
-            </div>
+      <div class="footer-container">
+        <div class="footer-left">
+          <h2><span class="pop">PopCorn</span><span class="together">Together</span></h2>
+          <p>Stream movies together, anywhere, anytime.</p>
+          <div class="footer-socials">
+            <a href="#"><i class="fa-brands fa-facebook"></i></a>
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-twitter"></i></a>
+            <a href="#"><i class="fa-brands fa-youtube"></i></a>
           </div>
         </div>
-        <div class="footer-bottom">
-          <p>© 2025 PopCornTogether. All rights reserved.</p>
+        <div class="footer-middle">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#">Services</a></li>
+          </ul>
         </div>
+        <div class="footer-right">
+          <h3>Support</h3>
+          <ul>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 PopCornTogether. All rights reserved.</p>
+      </div>
     </footer>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
-
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
     <!-- Main JavaScript -->
-    <script src="index.js"></script>
-
+    <script src="/index.js"></script>
+    <script src="/custom-cursor.js"></script>
   </body>
 </html>

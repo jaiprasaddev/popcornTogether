@@ -222,8 +222,7 @@ button:hover {
     align-items: center;
     gap: 15px;
     padding: 20px 30px;
-    background: #222;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: #191919;
     flex-shrink: 0;
 }
 
@@ -502,8 +501,7 @@ button:hover {
 /* ========== CHAT INPUT AREA ========== */
 .chat-input-area {
     padding: 20px 30px;
-    background: #222;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: #191919;
     flex-shrink: 0;
 }
 

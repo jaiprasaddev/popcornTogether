@@ -1,0 +1,43 @@
+/* Custom Cursor Styles */
+#custom-cursor {
+  height: 20px;
+  width: 20px;
+  background: linear-gradient(135deg, #EF3E3A, #A65396);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transition: all linear 0.1s;
+  transform: translate(-50%, -50%);
+}
+
+#custom-cursor-blur {
+  height: 300px;
+  width: 300px;
+  background: linear-gradient(135deg, rgba(239, 62, 58, 0.3), rgba(166, 83, 150, 0.3));
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  filter: blur(80px);
+  z-index: 9998;
+  transition: all linear 0.4s;
+  transform: translate(-50%, -50%);
+}
+
+/* Hover effect class */
+#custom-cursor.hover {
+  transform: translate(-50%, -50%) scale(5);
+  border: 1px solid #fff;
+  background: transparent;
+}
+
+/* Hide default cursor on body */
+body.custom-cursor-active {
+  cursor: none;
+}
+
+body.custom-cursor-active a,
+body.custom-cursor-active button,
+body.custom-cursor-active [role="button"] {
+  cursor: none;
+}
