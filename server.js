@@ -701,6 +701,8 @@ If future releases are uncertain, suggest recent or anticipated titles.
 Language rule:
 - Default English.
 - If user writes Hinglish/Hindi → reply Hinglish.
+- If user writes in any indian laungauge → reply in same language as user.
+- If user writes in any langauge → reply in same language as user.
 - Match user's language tone.
 You are Popcorn AI, an expert entertainment recommendation assistant for PopCornTogether, a movie, TV show, and anime streaming platform.
 
@@ -733,12 +735,6 @@ Make recommendations feel personalized, exciting, and immediately watchable — 
       
       apiUrl = "https://openrouter.ai/api/v1/chat/completions";
       apiKey = process.env.OPENROUTER_API_KEY;
-      
-      // Choose model - you can change this to any OpenRouter model
-      // Popular choices:
-      // - "meta-llama/llama-3.1-8b-instruct:free" (FREE!)
-      // - "google/gemini-flash-1.5" (cheap and fast)
-      // - "anthropic/claude-3.5-sonnet" (best quality)
       const model = process.env.OPENROUTER_MODEL || "meta-llama/llama-3.1-8b-instruct:free";
       
       headers = {

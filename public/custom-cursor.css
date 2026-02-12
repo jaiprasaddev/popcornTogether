@@ -32,9 +32,7 @@
 }
 
 /* Hide default cursor on body */
-body.custom-cursor-active {
-  cursor: none;
-}
+
 
 body.custom-cursor-active a,
 body.custom-cursor-active button,
