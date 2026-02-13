@@ -168,8 +168,52 @@
       // ❌ not logged in → redirect (NO BACK POSSIBLE)
       window.location.replace("/Login.html");
     } else {
-      // ✅ logged in → show page
+      // ✅ logged in → show page and update UI
       document.body.style.display = "block";
+      
+      // Update desktop UI
+      const desktopUserBox = document.getElementById('desktopUserBox');
+      const desktopUsername = document.getElementById('desktopUsername');
+      const desktopLoginBtn = document.getElementById('desktopLoginBtn');
+      
+      if (desktopUserBox && desktopUsername && desktopLoginBtn) {
+        desktopUsername.textContent = user.displayName || user.email || 'User';
+        desktopUserBox.style.display = 'flex';
+        desktopLoginBtn.style.display = 'none';
+      }
+      
+      // Update mobile UI
+      const mobileUserSection = document.getElementById('mobileUserSection');
+      const mobileUsername = document.getElementById('mobileUsername');
+      const mobileLoginSection = document.getElementById('mobileLoginSection');
+      
+      if (mobileUserSection && mobileUsername && mobileLoginSection) {
+        mobileUsername.textContent = user.displayName || user.email || 'User';
+        mobileUserSection.style.display = 'flex';
+        mobileLoginSection.style.display = 'none';
+      }
+    }
+  });
+  
+  // Logout handlers
+  document.addEventListener('DOMContentLoaded', () => {
+    const desktopLogoutBtn = document.getElementById('desktopLogoutBtn');
+    const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+    
+    if (desktopLogoutBtn) {
+      desktopLogoutBtn.addEventListener('click', () => {
+        firebase.auth().signOut().then(() => {
+          window.location.replace("/Login.html");
+        });
+      });
+    }
+    
+    if (mobileLogoutBtn) {
+      mobileLogoutBtn.addEventListener('click', () => {
+        firebase.auth().signOut().then(() => {
+          window.location.replace("/Login.html");
+        });
+      });
     }
   });
 </script>
